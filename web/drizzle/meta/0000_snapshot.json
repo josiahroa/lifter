@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "b182a139-4cf0-4bf0-941e-5b502fa56d0b",
+  "id": "7c4e615d-46bd-4f43-89fc-e56aaa712958",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "attachments": {
@@ -68,21 +68,7 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "lift_variations_lift_id_lifts_id_fk": {
-          "name": "lift_variations_lift_id_lifts_id_fk",
-          "tableFrom": "lift_variations",
-          "tableTo": "lifts",
-          "columnsFrom": [
-            "lift_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {
         "lift_variations_id": {
           "name": "lift_variations_id",
@@ -153,52 +139,12 @@
           "name": "attachment_id",
           "type": "int",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "workout_lifts_workout_id_workouts_id_fk": {
-          "name": "workout_lifts_workout_id_workouts_id_fk",
-          "tableFrom": "workout_lifts",
-          "tableTo": "workouts",
-          "columnsFrom": [
-            "workout_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "workout_lifts_lift_variation_id_lift_variations_id_fk": {
-          "name": "workout_lifts_lift_variation_id_lift_variations_id_fk",
-          "tableFrom": "workout_lifts",
-          "tableTo": "lift_variations",
-          "columnsFrom": [
-            "lift_variation_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "workout_lifts_attachment_id_attachments_id_fk": {
-          "name": "workout_lifts_attachment_id_attachments_id_fk",
-          "tableFrom": "workout_lifts",
-          "tableTo": "attachments",
-          "columnsFrom": [
-            "attachment_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {
         "workout_lifts_id": {
           "name": "workout_lifts_id",
@@ -243,21 +189,7 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "workout_sets_workout_lift_id_workout_lifts_id_fk": {
-          "name": "workout_sets_workout_lift_id_workout_lifts_id_fk",
-          "tableFrom": "workout_sets",
-          "tableTo": "workout_lifts",
-          "columnsFrom": [
-            "workout_lift_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {
         "workout_sets_id": {
           "name": "workout_sets_id",

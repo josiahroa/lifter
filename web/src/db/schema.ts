@@ -35,7 +35,7 @@ export const workoutLifts = mysqlTable("workout_lifts", {
   id: int("id").primaryKey().autoincrement(),
   workoutId: int("workout_id").notNull(),
   liftVariationId: int("lift_variation_id").notNull(),
-  attachmentId: int("attachment_id").notNull(),
+  attachmentId: int("attachment_id"),
 });
 
 export const workoutSets = mysqlTable("workout_sets", {
