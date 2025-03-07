@@ -11,13 +11,20 @@
   "dependencies": {
     "@clerk/nextjs": "^6.11.0",
     "@lifter/db": "workspace:*",
+    "@tanstack/react-query": "^5.67.1",
+    "@trpc/client": "^10.45.2",
+    "@trpc/next": "^10.45.2",
+    "@trpc/react-query": "^10.45.2",
+    "@trpc/server": "^10.45.2",
     "add": "^2.0.6",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.40.0",
     "next": "15.1.6",
     "pnpm": "^10.2.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "superjson": "^2.2.2",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
