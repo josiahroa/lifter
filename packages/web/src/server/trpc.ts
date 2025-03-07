@@ -4,6 +4,7 @@ import superjson from "superjson";
 
 // Context type definition
 export async function createContext(opts: CreateNextContextOptions) {
+  console.log("createContext", opts);
   return {
     // Add any context you want available to all procedures
     // Example: session: await getSession(opts.req, opts.res),

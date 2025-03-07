@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-
+import { Workout } from "@lifter/db";
 export default function Dashboard() {
-  const [workouts, setWorkouts] = useState<any[]>([]);
+  const [workouts, setWorkouts] = useState<Workout[]>([]);
 
   // Retrieve workouts for the current user
   useEffect(() => {
