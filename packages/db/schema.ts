@@ -48,3 +48,11 @@ export const workoutSets = mysqlTable("workout_sets", {
 /**
  * TOOD: Define the relations for the application level since Planetscale doesn't support foreign keys
  */
+
+// Type Exports
+export type Workout = typeof workouts.$inferSelect;
+export type WorkoutLift = typeof workoutLifts.$inferSelect;
+export type WorkoutSet = typeof workoutSets.$inferSelect;
+export type Lift = typeof lifts.$inferSelect;
+export type LiftVariation = typeof liftVariations.$inferSelect;
+export type Attachment = typeof attachments.$inferSelect;

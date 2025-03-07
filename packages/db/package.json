@@ -1,0 +1,29 @@
+{
+  "name": "@lifter/db",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "main": "index.js",
+  "types": "index.ts",
+  "scripts": {
+    "db:seed": "tsx src/db/seed.ts seed",
+    "db:clear": "tsx src/db/seed.ts clear",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
+  },
+  "keywords": [],
+  "author": "siahroa25@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "@planetscale/database": "^1.19.0",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.9",
+    "drizzle-kit": "^0.30.5",
+    "typescript": "^5.8.2"
+  },
+  "peerDependencies": {
+    "drizzle-orm": "^0.40.0"
+  }
+}

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import db from "@/db";
-import { workouts } from "@/db/schema";
+import db from "@/lib/db";
+import { workouts } from "@lifter/db/schema";
 import { eq } from "drizzle-orm";
 
 export async function GET(
@@ -8,7 +8,7 @@ export async function GET(
   { params }: { params: { userId: string } }
 ) {
   // await is required in NextJs 15+
-  const userId = await params.userId;
+  const { userId } = await params;
 
   if (!userId) {
     return NextResponse.json({ error: "Missing userId" }, { status: 400 });

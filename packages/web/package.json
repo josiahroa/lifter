@@ -1,20 +1,16 @@
 {
-  "name": "lifter-web",
+  "name": "@lifter/web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "db:seed": "tsx src/db/seed.ts seed",
-    "db:clear": "tsx src/db/seed.ts clear",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "lint": "next lint"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.11.0",
-    "@planetscale/database": "^1.19.0",
+    "@lifter/db": "workspace:*",
     "add": "^2.0.6",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.40.0",
