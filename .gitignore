@@ -1,2 +1,18 @@
 # ai
 /.claude
+
+# Dependencies
+node_modules/
+
+# pnpm
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local

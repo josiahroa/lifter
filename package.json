@@ -1,0 +1,17 @@
+{
+  "name": "lifter-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Lifter workspace - mobile app and shared packages",
+  "scripts": {
+    "mobile": "pnpm --filter @lifter/mobile",
+    "mobile:start": "pnpm --filter @lifter/mobile start",
+    "mobile:ios": "pnpm --filter @lifter/mobile ios",
+    "mobile:android": "pnpm --filter @lifter/mobile android"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0"
+}
