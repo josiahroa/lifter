@@ -6,7 +6,7 @@ export default function TabOneScreen() {
   console.log("TabOneScreen");
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Lifter</Text>
+      <Text className="text-2xl font-bold">Lifter</Text>
     </View>
   );
 }
