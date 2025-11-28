@@ -1,5 +1,6 @@
-# ai
-/.claude
+# IDE and AI
+.claude/
+.vscode/
 
 # Dependencies
 node_modules/
