@@ -1,0 +1,13 @@
+{
+  "name": "@lifter/db",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Schemas and types",
+  "license": "ISC",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.45.1"
+  }
+}

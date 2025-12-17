@@ -1,0 +1,21 @@
+{
+  "name": "@lifter/migrations",
+  "version": "1.0.0",
+  "description": "Migrations for the database",
+  "private": true,
+  "license": "ISC",
+  "scripts": {
+    "generate": "drizzle-kit generate",
+    "migrate": "drizzle-kit migrate",
+    "studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "drizzle-orm": "^0.45.1",
+    "postgres": "^3.4.7"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.8",
+    "tsx": "^4.21.0"
+  }
+}
