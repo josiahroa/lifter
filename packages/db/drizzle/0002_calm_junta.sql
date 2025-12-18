@@ -1,0 +1,3 @@
+ALTER TABLE "exercises" ADD COLUMN "user_id" integer;--> statement-breakpoint
+ALTER TABLE "exercises" ADD CONSTRAINT "exercises_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "workout_exercises" ADD CONSTRAINT "workout_exercises_workout_id_exercise_id_unique" UNIQUE("workout_id","exercise_id");

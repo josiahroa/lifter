@@ -8,9 +8,9 @@
     "mobile:start": "pnpm --filter @lifter/mobile start",
     "mobile:ios": "pnpm --filter @lifter/mobile ios",
     "mobile:android": "pnpm --filter @lifter/mobile android",
-    "db:generate": "pnpm --filter @lifter/migrations generate",
-    "db:migrate": "pnpm --filter @lifter/migrations migrate",
-    "db:studio": "pnpm --filter @lifter/migrations studio"
+    "db:generate": "pnpm --filter @lifter/db generate",
+    "db:migrate": "pnpm --filter @lifter/db migrate",
+    "db:studio": "pnpm --filter @lifter/db studio"
   },
   "engines": {
     "node": ">=18.0.0",

@@ -2,12 +2,23 @@
   "name": "@lifter/db",
   "private": true,
   "version": "1.0.0",
-  "description": "Schemas and types",
+  "description": "",
   "license": "ISC",
+  "scripts": {
+    "generate": "drizzle-kit generate",
+    "migrate": "drizzle-kit migrate",
+    "studio": "drizzle-kit studio"
+  },
   "exports": {
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "drizzle-orm": "^0.45.1"
+    "dotenv": "^17.2.3",
+    "drizzle-orm": "^0.45.1",
+    "postgres": "^3.4.7"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.8",
+    "tsx": "^4.21.0"
   }
 }
