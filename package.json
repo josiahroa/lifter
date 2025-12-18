@@ -10,7 +10,8 @@
     "mobile:android": "pnpm --filter @lifter/mobile android",
     "db:generate": "pnpm --filter @lifter/db generate",
     "db:migrate": "pnpm --filter @lifter/db migrate",
-    "db:studio": "pnpm --filter @lifter/db studio"
+    "db:studio": "pnpm --filter @lifter/db studio",
+    "db:test": "pnpm --filter @lifter/db test"
   },
   "engines": {
     "node": ">=18.0.0",
