@@ -15,6 +15,8 @@ beforeAll(() => {
 
   sql = postgres(url, { max: 1 });
   db = drizzle(sql);
+
+  return db;
 });
 
 afterAll(async () => {
@@ -39,7 +41,7 @@ test("all tables exist", async () => {
   `;
 
   const existing = rows
-    .map((r: any) => r.tablename as string)
+    .map((r) => r.tablename)
     .filter((name) => expectedTables.includes(name))
     .sort();
 
