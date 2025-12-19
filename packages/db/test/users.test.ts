@@ -34,11 +34,7 @@ afterAll(async () => {
   await sql.end({ timeout: 5_000 });
 });
 
-describe("users", () => {
-  beforeEach(async () => {
-    await sql`TRUNCATE TABLE "users" RESTART IDENTITY CASCADE`;
-  });
-
+describe("insert users", () => {
   it("can parse an insert user payload", async () => {
     const parsedUser = UsersInsertSchema.parse({
       name: "Alice",
@@ -75,7 +71,9 @@ describe("users", () => {
     expect(rows[0].name).toBe("Alice");
     expect(rows[0].email).toBe("alice@example.com");
   });
+});
 
+describe("update users", () => {
   it("can parse an update user payload", async () => {
     const updatedAt = new Date();
     const parsedUser = UsersUpdateSchema.parse({
@@ -88,7 +86,7 @@ describe("users", () => {
     });
   });
 
-  it("can throw a zod error if the update user payload is invalid", async () => {
+  it("should throw a zod error if the update user payload has id", async () => {
     expect(() =>
       UsersUpdateSchema.parse({
         id: uuidv4(),
@@ -98,12 +96,22 @@ describe("users", () => {
     ).toThrow(ZodError);
   });
 
-  it("can throw a zod error if attempting to update createdAt", async () => {
+  it("should throw a zod error if the update user payload has createdAt", async () => {
     expect(() =>
       UsersUpdateSchema.parse({
         name: "Bob",
         updatedAt: new Date(),
         createdAt: new Date(),
+      })
+    ).toThrow(ZodError);
+  });
+
+  it("should throw a zod error if the update user payload has unknown fields", async () => {
+    expect(() =>
+      UsersUpdateSchema.parse({
+        name: "Bob",
+        updatedAt: new Date(),
+        unknownField: "unknown",
       })
     ).toThrow(ZodError);
   });
@@ -141,5 +149,24 @@ describe("users", () => {
     expect(rows[0].name).toBe("Bob");
     expect(rows[0].email).toBe("bob@example.com");
     expect(dbIso).toBe(expectedIso);
+  });
+});
+
+describe("delete users", () => {
+  it("can delete a user", async () => {
+    const parsedUser = UsersInsertSchema.parse({
+      name: "Alice",
+      email: "alice@example.com",
+    });
+    const [inserted] = await db.insert(users).values(parsedUser).returning();
+
+    await db.delete(users).where(eq(users.id, inserted.id));
+
+    const rows = await sql`
+    SELECT id
+    FROM users
+    WHERE id = ${inserted.id}
+  `;
+    expect(rows).toHaveLength(0);
   });
 });
