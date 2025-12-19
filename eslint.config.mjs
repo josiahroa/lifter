@@ -1,6 +1,9 @@
+// @ts-nocheck - This is necessary to disable the type errors for the eslint-plugin-drizzle package
 import eslint from "@eslint/js";
 import { defineConfig } from "eslint/config";
 import tseslint from "typescript-eslint";
+import drizzle from "eslint-plugin-drizzle";
+import parser from "@typescript-eslint/parser";
 
 export default defineConfig(
   eslint.configs.recommended,
@@ -17,5 +20,20 @@ export default defineConfig(
       "**/*.config.ts",
       "**/*.config.js",
     ],
+  },
+  {
+    files: ["packages/db/src/**/*.ts"],
+    plugins: {
+      drizzle,
+    },
+    languageOptions: {
+      parser,
+      parserOptions: {
+        project: "./packages/db/tsconfig.json",
+      },
+    },
+    rules: {
+      ...drizzle.configs.all.rules,
+    },
   }
 );
