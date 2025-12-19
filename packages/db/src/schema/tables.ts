@@ -5,7 +5,7 @@ import { muscleGroupEnum, muscleGroupTargetEnum, equipmentEnum } from "./enums";
 import { timestamps } from "./columns.helpers";
 
 export const users = table("users", {
-  id: pg.serial("id").primaryKey(),
+  id: pg.uuid("id").defaultRandom().primaryKey(),
   name: pg.text("name").notNull(),
   email: pg.text("email").notNull().unique(),
   ...timestamps,
@@ -14,7 +14,7 @@ export const users = table("users", {
 export const workouts = table("workouts", {
   id: pg.serial("id").primaryKey(),
   userId: pg
-    .integer("user_id")
+    .uuid("user_id")
     .references(() => users.id)
     .notNull(),
   name: pg.text("name").notNull(),
@@ -24,7 +24,7 @@ export const workouts = table("workouts", {
 export const exercises = table("exercises", {
   id: pg.serial("id").primaryKey(),
   userId: pg
-    .integer("user_id")
+    .uuid("user_id")
     .references(() => users.id)
     .notNull(),
   name: pg.text("name").notNull(),
@@ -57,7 +57,7 @@ export const workoutLogs = table(
   {
     id: pg.serial("id").primaryKey(),
     userId: pg
-      .integer("user_id")
+      .uuid("user_id")
       .references(() => users.id)
       .notNull(),
     workoutDate: pg.date("workout_date").notNull(),

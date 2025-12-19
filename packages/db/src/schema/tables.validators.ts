@@ -57,7 +57,25 @@ export const UsersInsertSchema = createInsertSchema(tables.users);
  * ```
  * @see https://orm.drizzle.team/docs/zod#update-schema
  */
-export const UsersUpdateSchema = createUpdateSchema(tables.users);
+const BaseUsersUpdateSchema = createUpdateSchema(tables.users)
+  .omit({
+    id: true,
+    createdAt: true,
+  })
+  .strict();
+
+export const UsersUpdateSchema = BaseUsersUpdateSchema.superRefine(
+  (data, ctx) => {
+    if (data.updatedAt == null) {
+      ctx.addIssue({
+        code: "invalid_type",
+        expected: "date",
+        path: ["updatedAt"],
+        message: "updatedAt is required when updating a user",
+      });
+    }
+  }
+);
 
 /**
  * The ExercisesSelectSchema can be used to validate the payload for selecting an exercise.
