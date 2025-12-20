@@ -11,7 +11,7 @@ services:
       POSTGRES_DB: lifter_test
 
     ports:
-      - 5432:5432
+      - 5434:5432
 
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "lifter_test"]

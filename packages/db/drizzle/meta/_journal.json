@@ -8,6 +8,13 @@
       "when": 1766114861983,
       "tag": "0000_magical_deathstrike",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1766205963777,
+      "tag": "0001_stiff_power_pack",
+      "breakpoints": true
     }
   ]
 }

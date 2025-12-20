@@ -83,6 +83,12 @@ export const exerciseLogs = table("exercise_logs", {
 
 export const exerciseSetLogs = table("exercise_set_logs", {
   id: pg.serial("id").primaryKey(),
+  workoutLogId: pg
+    .integer("workout_log_id")
+    .references(() => workoutLogs.id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
   exerciseLogId: pg
     .integer("exercise_log_id")
     .references(() => exerciseLogs.id, {

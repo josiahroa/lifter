@@ -51,7 +51,7 @@ async function main() {
     const env: NodeJS.ProcessEnv = {
       ...process.env,
       DATABASE_URL:
-        "postgresql://lifter_test:lifter_test@localhost:5432/lifter_test",
+        "postgresql://lifter_test:lifter_test@localhost:5434/lifter_test",
     };
 
     // Run migrations once before the test suite

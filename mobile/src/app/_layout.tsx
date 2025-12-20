@@ -1,57 +1,83 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
-import { useFonts } from "expo-font";
+console.log("AppLayout");
+
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
+import { PowerSyncContext } from "@powersync/react-native";
+import { useSystem } from "../lib/powersync/system";
 import "react-native-reanimated";
 import "../../global.css";
-import SpaceMono from "../../assets/fonts/SpaceMono-Regular.ttf";
+import { AuthProvider, useAuth } from "../components/providers/auth-provider";
+import { ActivityIndicator, View } from "react-native";
 
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
 } from "expo-router";
 
-export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: "(tabs)",
-};
-
 // Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+// Wrap in a try/catch to avoid unhandled promise rejections that can block startup.
+SplashScreen.preventAutoHideAsync().catch((e) => {
+  console.warn("Failed to prevent auto-hide for splash screen", e);
+});
 
-export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono,
-    ...FontAwesome.font,
+function RootNavigator() {
+  const { session, isLoading } = useAuth();
+  console.log("Loading session: ", isLoading);
+
+  SplashScreen.hideAsync().catch((e) => {
+    console.warn("Fallback failed to hide splash screen", e);
   });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
-    if (error) throw error;
-  }, [error]);
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    if (!isLoading) {
+      SplashScreen.hideAsync().catch((e) => {
+        console.warn("Failed to hide splash screen", e);
+      });
     }
-  }, [loaded]);
+  }, [isLoading]);
 
-  if (!loaded) {
-    return null;
+  if (isLoading) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <ActivityIndicator size="large" color="blue" />
+      </View>
+    );
   }
 
-  return <RootLayoutNav />;
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        animation: "fade",
+        animationDuration: 100,
+      }}
+    >
+      <Stack.Protected guard={!!session}>
+        <Stack.Screen name="(private)/home" />
+      </Stack.Protected>
+
+      <Stack.Protected guard={!session}>
+        <Stack.Screen name="auth/sign-in" />
+        <Stack.Screen name="auth/sign-up" />
+        <Stack.Screen name="auth/verify-email" />
+      </Stack.Protected>
+    </Stack>
+  );
 }
 
-function RootLayoutNav() {
+export default function AppLayout() {
+  const system = useSystem();
+
+  const db = useMemo(() => {
+    return system.powersync;
+  }, []);
+
   return (
-    <ThemeProvider value={DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-      </Stack>
-    </ThemeProvider>
+    <AuthProvider>
+      <PowerSyncContext.Provider value={db}>
+        <RootNavigator />
+      </PowerSyncContext.Provider>
+    </AuthProvider>
   );
 }
