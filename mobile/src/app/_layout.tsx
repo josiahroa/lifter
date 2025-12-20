@@ -1,5 +1,3 @@
-console.log("AppLayout");
-
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useMemo } from "react";
@@ -16,7 +14,6 @@ export {
 } from "expo-router";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
-// Wrap in a try/catch to avoid unhandled promise rejections that can block startup.
 SplashScreen.preventAutoHideAsync().catch((e) => {
   console.warn("Failed to prevent auto-hide for splash screen", e);
 });
@@ -54,7 +51,7 @@ function RootNavigator() {
       }}
     >
       <Stack.Protected guard={!!session}>
-        <Stack.Screen name="(private)/home" />
+        <Stack.Screen name="(private)" />
       </Stack.Protected>
 
       <Stack.Protected guard={!session}>

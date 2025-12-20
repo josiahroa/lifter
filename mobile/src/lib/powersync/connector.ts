@@ -9,7 +9,7 @@ import {
 
 import { SupabaseClient } from "@supabase/supabase-js";
 import { client } from "../supabase/client";
-import { AuthClient, SignInPayload, SignInMethod } from "../auth";
+import { AuthClient, auth as authClient } from "../auth";
 
 /// Postgres Response codes that we cannot recover from by retrying.
 const FATAL_RESPONSE_CODES = [
@@ -26,12 +26,8 @@ const FATAL_RESPONSE_CODES = [
 export class SupabaseConnector implements PowerSyncBackendConnector {
   client: SupabaseClient;
 
-  constructor(private readonly auth: AuthClient) {
+  constructor(private readonly auth: AuthClient = authClient) {
     this.client = client;
-  }
-
-  async login(method: SignInMethod, payload: SignInPayload[SignInMethod]) {
-    return await this.auth.signIn(method, payload);
   }
 
   async fetchCredentials() {
@@ -42,10 +38,14 @@ export class SupabaseConnector implements PowerSyncBackendConnector {
       throw new Error("No session found");
     }
 
-    console.log("powersync credentials found", session);
+    const powerSyncUrl = process.env.EXPO_PUBLIC_POWERSYNC_URL;
+
+    if (!powerSyncUrl) {
+      throw new Error("POWERSYNC_URL is not set");
+    }
 
     return {
-      endpoint: process.env.EXPO_PUBLIC_POWERSYNC_URL ?? "",
+      endpoint: powerSyncUrl,
       token: session.accessToken,
     } satisfies PowerSyncCredentials;
   }

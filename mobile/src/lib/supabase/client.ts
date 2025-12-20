@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 
 export const client = createClient(
   process.env.EXPO_PUBLIC_SUPABASE_URL ?? "",
-  process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? "",
+  process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "",
   {
     auth: {
       storage: new ExpoSecureStoreAdapter(),
