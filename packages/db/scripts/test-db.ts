@@ -48,16 +48,14 @@ async function main() {
     // Wait until Postgres in the container is actually ready to accept connections
     waitForDb(cwd);
 
-    const env: NodeJS.ProcessEnv = {
+    const env = {
       ...process.env,
       DATABASE_URL:
         "postgresql://lifter_test:lifter_test@localhost:5434/lifter_test",
     };
 
-    // Run migrations once before the test suite
     run("pnpm migrate", cwd, env);
 
-    // Then run the Vitest suite
     run("pnpm vitest run", cwd, env);
   } catch (error: any) {
     exitCode = typeof error?.status === "number" ? error.status : 1;

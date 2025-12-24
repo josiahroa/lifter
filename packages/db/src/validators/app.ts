@@ -1,81 +1,12 @@
 /**
  * This file contains zod schemas for the tables in the database.
  */
-import * as tables from "./tables";
+import * as tables from "../schema/app";
 import {
   createInsertSchema,
   createSelectSchema,
   createUpdateSchema,
 } from "drizzle-zod";
-
-/**
- * The UsersSelectSchema can be used to validate the payload for selecting a user.
- *
- * Usage:
- * ```ts
- * try {
- *   const parsedUser = UsersSelectSchema.parse(user);
- * } catch (error) {
- *   if (error instanceof ZodError) {
- *     console.error(error.issues);
- *   }
- * }
- * ```
- * @see https://orm.drizzle.team/docs/zod#select-schema
- */
-export const UsersSelectSchema = createSelectSchema(tables.users);
-
-/**
- * The UsersInsertSchema can be used to validate the payload for inserting a user.
- *
- * Usage:
- * ```ts
- * try {
- *   const parsedUser = UsersInsertSchema.parse(user);
- * } catch (error) {
- *   if (error instanceof ZodError) {
- *     console.error(error.issues);
- *   }
- * }
- * ```
- * @see https://orm.drizzle.team/docs/zod#insert-schema
- */
-export const UsersInsertSchema = createInsertSchema(tables.users);
-
-/**
- * The UsersUpdateSchema can be used to validate the payload for updating a user.
- *
- * Usage:
- * ```ts
- * try {
- *   const parsedUser = UsersUpdateSchema.parse(user);
- * } catch (error) {
- *   if (error instanceof ZodError) {
- *     console.error(error.issues);
- *   }
- * }
- * ```
- * @see https://orm.drizzle.team/docs/zod#update-schema
- */
-const BaseUsersUpdateSchema = createUpdateSchema(tables.users)
-  .omit({
-    id: true,
-    createdAt: true,
-  })
-  .strict();
-
-export const UsersUpdateSchema = BaseUsersUpdateSchema.superRefine(
-  (data, ctx) => {
-    if (data.updatedAt == null) {
-      ctx.addIssue({
-        code: "invalid_type",
-        expected: "date",
-        path: ["updatedAt"],
-        message: "updatedAt is required when updating a user",
-      });
-    }
-  }
-);
 
 /**
  * The ExercisesSelectSchema can be used to validate the payload for selecting an exercise.

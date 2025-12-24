@@ -1,2 +1,0 @@
-ALTER TABLE "exercise_set_logs" ADD COLUMN "workout_log_id" integer NOT NULL;--> statement-breakpoint
-ALTER TABLE "exercise_set_logs" ADD CONSTRAINT "exercise_set_logs_workout_log_id_workout_logs_id_fk" FOREIGN KEY ("workout_log_id") REFERENCES "public"."workout_logs"("id") ON DELETE cascade ON UPDATE no action;

@@ -1,5 +1,5 @@
 /**
- * This file contains helper functions for creating columns in the database.
+ * This file contains helper functions for database schemas.
  */
 import { timestamp } from "drizzle-orm/pg-core";
 

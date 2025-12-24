@@ -1,32 +1,65 @@
-import { pgTable as table } from "drizzle-orm/pg-core";
 import * as pg from "drizzle-orm/pg-core";
+import { timestamps } from "../helpers";
+import { authUsers } from "./auth";
 
-import { muscleGroupEnum, muscleGroupTargetEnum, equipmentEnum } from "./enums";
-import { timestamps } from "./columns.helpers";
+export const appSchema = pg.pgSchema("app");
 
-export const users = table("users", {
-  id: pg.uuid("id").defaultRandom().primaryKey(),
-  name: pg.text("name").notNull(),
-  email: pg.text("email").notNull().unique(),
-  ...timestamps,
-});
-
-export const workouts = table("workouts", {
+export const workouts = appSchema.table("workouts", {
   id: pg.serial("id").primaryKey(),
   userId: pg
     .uuid("user_id")
-    .references(() => users.id)
-    .notNull(),
+    .notNull()
+    .references(() => authUsers.id),
   name: pg.text("name").notNull(),
   ...timestamps,
 });
 
-export const exercises = table("exercises", {
+export const muscleGroupEnum = appSchema.enum("muscle_group", [
+  "chest",
+  "back",
+  "shoulders",
+  "legs",
+  "arms",
+  "core",
+]);
+
+export const muscleGroupTargetEnum = appSchema.enum("muscle_group_target", [
+  "arms_biceps",
+  "arms_triceps",
+  "arms_forearms",
+  "shoulders_front_delts",
+  "shoulders_side_delts",
+  "shoulders_rear_delts",
+  "back_lats",
+  "back_traps",
+  "back_rhomboids",
+  "legs_glutes",
+  "legs_hamstrings",
+  "legs_quads",
+  "legs_calves",
+  "chest_upper",
+  "chest_lower",
+  "chest_middle",
+  "core_abs",
+  "core_obliques",
+  "core_lower_back",
+]);
+
+export const equipmentEnum = appSchema.enum("equipment", [
+  "barbell",
+  "dumbbell",
+  "machine",
+  "bodyweight",
+  "cable",
+  "other",
+]);
+
+export const exercises = appSchema.table("exercises", {
   id: pg.serial("id").primaryKey(),
   userId: pg
     .uuid("user_id")
-    .references(() => users.id)
-    .notNull(),
+    .notNull()
+    .references(() => authUsers.id),
   name: pg.text("name").notNull(),
   muscleGroup: muscleGroupEnum("muscle_group").notNull(),
   muscleGroupTarget: muscleGroupTargetEnum("muscle_group_target").notNull(),
@@ -35,7 +68,7 @@ export const exercises = table("exercises", {
   ...timestamps,
 });
 
-export const workoutExercises = table(
+export const workoutExercises = appSchema.table(
   "workout_exercises",
   {
     id: pg.serial("id").primaryKey(),
@@ -49,24 +82,24 @@ export const workoutExercises = table(
       .notNull(),
     ...timestamps,
   },
-  (table) => [pg.unique().on(table.workoutId, table.exerciseId)]
+  (t) => [pg.unique().on(t.workoutId, t.exerciseId)]
 );
 
-export const workoutLogs = table(
+export const workoutLogs = appSchema.table(
   "workout_logs",
   {
     id: pg.serial("id").primaryKey(),
     userId: pg
       .uuid("user_id")
-      .references(() => users.id)
-      .notNull(),
+      .notNull()
+      .references(() => authUsers.id),
     workoutDate: pg.date("workout_date").notNull(),
     ...timestamps,
   },
-  (table) => [pg.unique().on(table.userId, table.workoutDate)]
+  (t) => [pg.unique().on(t.userId, t.workoutDate)]
 );
 
-export const exerciseLogs = table("exercise_logs", {
+export const exerciseLogs = appSchema.table("exercise_logs", {
   id: pg.serial("id").primaryKey(),
   workoutLogId: pg
     .integer("workout_log_id")
@@ -81,7 +114,7 @@ export const exerciseLogs = table("exercise_logs", {
   ...timestamps,
 });
 
-export const exerciseSetLogs = table("exercise_set_logs", {
+export const exerciseSetLogs = appSchema.table("exercise_set_logs", {
   id: pg.serial("id").primaryKey(),
   workoutLogId: pg
     .integer("workout_log_id")

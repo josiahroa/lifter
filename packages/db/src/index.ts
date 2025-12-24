@@ -10,7 +10,5 @@ async function main() {
 
 main();
 
-export * from "./schema/tables";
-export * from "./schema/tables.validators";
-export * from "./schema/enums";
-export * from "./schema/enums.validators";
+export * from "./schema";
+export * from "./validators";
