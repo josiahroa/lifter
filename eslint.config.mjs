@@ -19,6 +19,11 @@ export default defineConfig(
       "**/*.config.mjs",
       "**/*.config.ts",
       "**/*.config.js",
+      /**
+       * The backend module utilizes its own eslint config as
+       * recommended by NestJS.
+       */
+      "backend/**",
     ],
   },
   {
