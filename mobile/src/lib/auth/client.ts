@@ -6,6 +6,8 @@ import {
   AuthChangeSubscription,
   AuthBackend,
   SignInMethod,
+  RequestOTPCodeResponse,
+  OTPMethod,
 } from "./types";
 
 export class AuthClient {
@@ -23,7 +25,7 @@ export class AuthClient {
   signIn<K extends SignInMethod>(
     method: K,
     payload: SignInPayload[K]
-  ): Promise<UserSession> {
+  ): Promise<UserSession | null> {
     return this.strategies[method].signIn(payload);
   }
 
@@ -34,8 +36,15 @@ export class AuthClient {
     return this.backend.signUpWithEmail(email, password);
   }
 
-  confirmEmail(email: string, token: string): Promise<UserSession> {
+  confirmEmail(email: string, token: string): Promise<UserSession | null> {
     return this.backend.confirmEmail(email, token);
+  }
+
+  requestOTPCode(
+    method: OTPMethod,
+    id: string
+  ): Promise<RequestOTPCodeResponse> {
+    return this.backend.requestOTPCode(method, id);
   }
 
   getSession(): Promise<UserSession | null> {

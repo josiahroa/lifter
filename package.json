@@ -4,6 +4,7 @@
   "private": true,
   "description": "Lifter workspace - mobile app and shared packages",
   "scripts": {
+    "prepare": "pnpm --filter @lifter/http build",
     "db:generate": "pnpm --filter @lifter/db generate",
     "db:migrate": "pnpm --filter @lifter/db migrate",
     "db:studio": "pnpm --filter @lifter/db studio",

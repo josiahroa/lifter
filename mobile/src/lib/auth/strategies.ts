@@ -3,7 +3,7 @@ import { SignInPayload } from "./index";
 import { SignInMethod } from "./index";
 
 export interface SignInStrategy<Input> {
-  signIn(input: Input): Promise<UserSession>;
+  signIn(input: Input): Promise<UserSession | null>;
 }
 
 export abstract class BaseSignInStrategy<Input>
@@ -11,7 +11,7 @@ export abstract class BaseSignInStrategy<Input>
 {
   constructor(protected readonly backend: AuthBackend) {}
 
-  abstract signIn(input: Input): Promise<UserSession>;
+  abstract signIn(input: Input): Promise<UserSession | null>;
 }
 
 export class EmailPasswordStrategy extends BaseSignInStrategy<
@@ -19,6 +19,12 @@ export class EmailPasswordStrategy extends BaseSignInStrategy<
 > {
   signIn(input: SignInPayload["email"]) {
     return this.backend.signInWithEmail(input.email, input.password);
+  }
+}
+
+export class OTPStrategy extends BaseSignInStrategy<SignInPayload["otp"]> {
+  signIn(input: SignInPayload["otp"]) {
+    return this.backend.signInWithOTP(input.method, input.id, input.code);
   }
 }
 
@@ -48,6 +54,7 @@ export class SignInStrategyFactory implements StrategyFactory {
   createStrategies(backend: AuthBackend) {
     return {
       email: new EmailPasswordStrategy(backend),
+      otp: new OTPStrategy(backend),
       google: new GoogleOAuthStrategy(backend),
       apple: new AppleOAuthStrategy(backend),
     };

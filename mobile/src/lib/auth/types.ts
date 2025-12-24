@@ -27,6 +27,10 @@ export const AuthChangeEventSchema = z.enum([
 
 export type AuthChangeEvent = z.infer<typeof AuthChangeEventSchema>;
 
+export const OTPMethodSchema = z.enum(["email", "phone"]);
+
+export type OTPMethod = z.infer<typeof OTPMethodSchema>;
+
 export type AuthChangeCallback = (
   event: AuthChangeEvent,
   session: UserSession | null
@@ -42,17 +46,33 @@ export interface SignInPayload {
   email: { email: string; password: string };
   google: { code: string };
   apple: { code: string };
+  otp: { method: OTPMethod; id: string; code: string };
+}
+
+export interface RequestOTPCodeResponse {
+  success: boolean;
+  message: string;
 }
 
 export type SignInMethod = keyof SignInPayload;
 
 export interface AuthBackend {
-  signInWithEmail(email: string, password: string): Promise<UserSession>;
-  signInWithGoogle(code: string): Promise<UserSession>;
-  signInWithApple(code: string): Promise<UserSession>;
+  signInWithEmail(email: string, password: string): Promise<UserSession | null>;
+  signInWithOTP(
+    method: OTPMethod,
+    id: string,
+    code: string
+  ): Promise<UserSession | null>;
+  signInWithGoogle(code: string): Promise<UserSession | null>;
+  signInWithApple(code: string): Promise<UserSession | null>;
 
   signUpWithEmail(email: string, password: string): Promise<UserSession | null>;
-  confirmEmail(email: string, token: string): Promise<UserSession>;
+  confirmEmail(email: string, token: string): Promise<UserSession | null>;
+
+  requestOTPCode(
+    method: OTPMethod,
+    id: string
+  ): Promise<RequestOTPCodeResponse>;
 
   getSession(): Promise<UserSession | null>;
   onAuthStateChange(callback: AuthChangeCallback): AuthChangeSubscription;

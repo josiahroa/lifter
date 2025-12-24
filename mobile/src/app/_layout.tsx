@@ -1,8 +1,6 @@
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useMemo } from "react";
-import { PowerSyncContext } from "@powersync/react-native";
-import { useSystem } from "../lib/powersync/system";
+import { useEffect } from "react";
 import "react-native-reanimated";
 import "../../global.css";
 import { AuthProvider, useAuth } from "../components/providers/auth-provider";
@@ -64,17 +62,17 @@ function RootNavigator() {
 }
 
 export default function AppLayout() {
-  const system = useSystem();
+  // const system = useSystem();
 
-  const db = useMemo(() => {
-    return system.powersync;
-  }, []);
+  // const db = useMemo(() => {
+  //   return system.powersync;
+  // }, []);
 
   return (
     <AuthProvider>
-      <PowerSyncContext.Provider value={db}>
-        <RootNavigator />
-      </PowerSyncContext.Provider>
+      {/* <PowerSyncContext.Provider value={db}> */}
+      <RootNavigator />
+      {/* </PowerSyncContext.Provider> */}
     </AuthProvider>
   );
 }
