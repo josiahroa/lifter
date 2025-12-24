@@ -111,6 +111,9 @@ importers:
       '@expo/vector-icons':
         specifier: ^15.0.3
         version: 15.0.3(expo-font@14.0.9)(react-native@0.81.5)(react@19.1.0)
+      '@lifter/auth':
+        specifier: workspace:*
+        version: link:../packages/auth
       '@lifter/http':
         specifier: workspace:*
         version: link:../packages/http
@@ -217,6 +220,16 @@ importers:
       vitest:
         specifier: ^4.0.16
         version: 4.0.16(@types/node@25.0.3)(lightningcss@1.30.1)
+
+  packages/auth:
+    dependencies:
+      zod:
+        specifier: ^4.2.1
+        version: 4.2.1
+    devDependencies:
+      tsx:
+        specifier: ^4.21.0
+        version: 4.21.0
 
   packages/db:
     dependencies:

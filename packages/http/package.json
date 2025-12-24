@@ -2,10 +2,9 @@
   "name": "@lifter/http",
   "version": "1.0.0",
   "description": "HTTP client for Lifter",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
+    "prepare": "pnpm run build",
     "test": "vitest run"
   },
   "exports": {

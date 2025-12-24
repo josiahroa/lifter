@@ -1,0 +1,28 @@
+{
+  "name": "@lifter/auth",
+  "version": "1.0.0",
+  "description": "Auth package for Lifter",
+  "scripts": {
+    "build": "tsc",
+    "prepare": "pnpm run build",
+    "test": "vitest run"
+  },
+  "author": "siahroa25@gmail.com",
+  "license": "ISC",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./strategies": {
+      "types": "./dist/strategies.d.ts",
+      "default": "./dist/strategies.js"
+    }
+  },
+  "dependencies": {
+    "zod": "^4.2.1"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0"
+  }
+}

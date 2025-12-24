@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
+    "@lifter/auth": "workspace:*",
     "@lifter/http": "workspace:*",
     "@op-engineering/op-sqlite": "^15.1.14",
     "@powersync/op-sqlite": "^0.7.17",

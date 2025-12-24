@@ -4,7 +4,8 @@ import {
   type PowerSyncCredentials,
 } from "@powersync/react-native";
 
-import { AuthClient, auth as authClient } from "../auth";
+import type { AuthClient } from "@lifter/auth";
+import { auth as authClient } from "../auth-client";
 
 // /// Postgres Response codes that we cannot recover from by retrying.
 // const FATAL_RESPONSE_CODES = [

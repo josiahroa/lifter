@@ -1,11 +1,11 @@
-import {
+import type {
   AuthBackend,
   AuthChangeCallback,
   AuthChangeSubscription,
   OTPMethod,
   RequestOTPCodeResponse,
   UserSession,
-} from "@/src/lib/auth/types";
+} from "@lifter/auth";
 import { HttpClient } from "@lifter/http";
 
 export class LifterAuthBackend implements AuthBackend {

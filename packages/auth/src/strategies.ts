@@ -1,6 +1,9 @@
-import { AuthBackend, UserSession } from ".";
-import { SignInPayload } from "./index";
-import { SignInMethod } from "./index";
+import type {
+  UserSession,
+  AuthBackend,
+  SignInPayload,
+  SignInMethod,
+} from "./types";
 
 export interface SignInStrategy<Input> {
   signIn(input: Input): Promise<UserSession | null>;

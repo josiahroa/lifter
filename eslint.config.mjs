@@ -27,15 +27,21 @@ export default defineConfig(
     ],
   },
   {
-    files: ["packages/db/src/**/*.ts"],
-    plugins: {
-      drizzle,
-    },
+    // Global configuration for all other TypeScript files
+    files: ["**/*.ts", "**/*.tsx"],
     languageOptions: {
       parser,
       parserOptions: {
-        project: "./packages/db/tsconfig.json",
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
       },
+    },
+  },
+  {
+    // Drizzle-specific rules only for db package
+    files: ["packages/db/src/**/*.ts"],
+    plugins: {
+      drizzle,
     },
     rules: {
       ...drizzle.configs.all.rules,

@@ -2,7 +2,7 @@ import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { auth } from "@/src/lib/auth";
+import { auth } from "@/src/lib/auth-client";
 
 export interface ConfirmEmailOTPPayload {
   code: string;

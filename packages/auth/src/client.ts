@@ -1,6 +1,5 @@
-import { SignInPayload } from ".";
 import { SignInStrategyFactory, SignInStrategy } from "./strategies";
-import {
+import type {
   UserSession,
   AuthChangeCallback,
   AuthChangeSubscription,
@@ -8,6 +7,7 @@ import {
   SignInMethod,
   RequestOTPCodeResponse,
   OTPMethod,
+  SignInPayload,
 } from "./types";
 
 export class AuthClient {

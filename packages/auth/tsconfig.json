@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
     "outDir": "./dist",
+    "rootDir": "./src",
+    "declaration": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "moduleResolution": "node",
-    "declaration": true
+    "moduleResolution": "node"
   },
-  "include": ["src/**/*.ts", "test/**/*.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { auth, UserSession } from "../../lib/auth";
+import type { UserSession } from "@lifter/auth";
+import { auth } from "@/src/lib/auth-client";
 
 export interface AuthContextType {
   session: UserSession | null;

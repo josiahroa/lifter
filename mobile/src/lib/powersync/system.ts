@@ -5,7 +5,7 @@ import {
 } from "@powersync/react-native";
 import { OPSqliteOpenFactory } from "@powersync/op-sqlite";
 import { AppSchema } from "./schema";
-import { SupabaseConnector } from "./connector";
+import { Connector } from "./connector";
 import { createContext, useContext } from "react";
 
 const logger = createBaseLogger();
@@ -13,11 +13,11 @@ logger.useDefaults();
 logger.setLevel(LogLevel.INFO);
 
 export class System {
-  supabaseConnector: SupabaseConnector;
+  supabaseConnector: Connector;
   powersync: PowerSyncDatabase;
 
   constructor() {
-    this.supabaseConnector = new SupabaseConnector();
+    this.supabaseConnector = new Connector();
 
     const opSqlite = new OPSqliteOpenFactory({
       dbFilename: "powersync.db",

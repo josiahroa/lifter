@@ -1,4 +1,4 @@
-import { auth } from "@/src/lib/auth";
+import { auth } from "@/src/lib/auth-client";
 import { router, useLocalSearchParams } from "expo-router";
 import { View, Text, TouchableOpacity, TextInput } from "react-native";
 import { useForm, Controller } from "react-hook-form";

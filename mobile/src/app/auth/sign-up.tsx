@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, TextInput } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { router } from "expo-router";
-import { auth } from "../../lib/auth";
+import { auth } from "../../lib/auth-client";
 
 export interface SignUpPayload {
   email: string;
