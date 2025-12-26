@@ -12,7 +12,10 @@
     "mobile": "pnpm --filter @lifter/mobile",
     "mobile:start": "pnpm --filter @lifter/mobile start",
     "mobile:ios": "pnpm --filter @lifter/mobile ios",
-    "mobile:android": "pnpm --filter @lifter/mobile android"
+    "mobile:android": "pnpm --filter @lifter/mobile android",
+    "dev": "docker compose -f .dev/docker-compose.yml up --build",
+    "dev:down": "docker compose -f .dev/docker-compose.yml down",
+    "dev:down:clean": "docker compose -f .dev/docker-compose.yml down -v"
   },
   "engines": {
     "node": ">=18.0.0",

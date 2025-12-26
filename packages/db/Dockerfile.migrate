@@ -1,0 +1,15 @@
+# Runs migrations for the db in a Docker container
+FROM node:24-alpine3.22
+
+WORKDIR /app
+
+COPY packages/db/package.json ./
+
+RUN npm install --no-save drizzle-kit dotenv
+
+# Copy migration files and config
+COPY packages/db/drizzle ./drizzle
+COPY packages/db/drizzle.config.ts ./
+
+# Run migrations with npx
+CMD ["npx", "drizzle-kit", "migrate"]

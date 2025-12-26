@@ -1,0 +1,42 @@
+services:
+  db:
+    image: postgres:18-alpine
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=lifter
+      - POSTGRES_PASSWORD=lifter
+      - POSTGRES_DB=lifter
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "lifter"]
+      interval: 2s
+      timeout: 2s
+      retries: 2
+
+  migrate:
+    build:
+      context: ../
+      dockerfile: packages/db/Dockerfile.migrate
+    environment:
+      - DATABASE_URL=postgresql://lifter:lifter@db:5432/lifter
+    depends_on:
+      db:
+        condition: service_healthy
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://lifter:lifter@db:5432/lifter
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  postgres_data:
