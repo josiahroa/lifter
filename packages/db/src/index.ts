@@ -1,14 +1,34 @@
 import { drizzle } from "drizzle-orm/postgres-js";
-import * as postgres from "postgres";
+import postgres from "postgres";
+import * as schema from "./schema";
+import { PgTable } from "drizzle-orm/pg-core";
+import { is } from "drizzle-orm/entity";
 
-async function main() {
-  const client = postgres(process.env.DATABASE_URL!, { prepare: false });
-  const db = drizzle({ client });
+// Automatically extract only table definitions from the schema
+function extractTables<T extends Record<string, unknown>>(schemaExports: T) {
+  const tables: Record<string, PgTable> = {};
 
-  return db;
+  for (const [key, value] of Object.entries(schemaExports)) {
+    if (is(value, PgTable)) {
+      tables[key] = value as PgTable;
+    }
+  }
+
+  return tables;
 }
 
-main();
+const schemaObj = extractTables(schema);
+
+export function createDbConnection(connectionString: string) {
+  const client = postgres(connectionString, { prepare: false });
+  return drizzle({
+    client,
+    schema: schemaObj,
+  });
+}
+
+export type DbConnection = ReturnType<typeof createDbConnection>;
 
 export * from "./schema";
 export * from "./validators";
+export * from "./types";

@@ -3,7 +3,8 @@ import type {
   AuthChangeCallback,
   AuthChangeSubscription,
   OTPMethod,
-  RequestOTPCodeResponse,
+  RequestOTPCodeRequestBody,
+  RequestOTPCodeResponseBody,
   UserSession,
 } from "@lifter/auth";
 import { HttpClient } from "@lifter/http";
@@ -77,15 +78,11 @@ export class LifterAuthBackend implements AuthBackend {
   }
 
   async requestOTPCode(
-    method: OTPMethod,
-    id: string
-  ): Promise<RequestOTPCodeResponse> {
-    const response = await this.httpClient.post<RequestOTPCodeResponse>(
+    body: RequestOTPCodeRequestBody
+  ): Promise<RequestOTPCodeResponseBody> {
+    const response = await this.httpClient.post<RequestOTPCodeResponseBody>(
       `${this.url}/api/v1/auth/otp/request`,
-      {
-        method,
-        id,
-      }
+      { ...body }
     );
     return response.data;
   }

@@ -1,6 +1,6 @@
 import * as pg from "drizzle-orm/pg-core";
 import { timestamps } from "../helpers";
-import { authUsers } from "./auth";
+import { users } from "./auth";
 
 export const appSchema = pg.pgSchema("app");
 
@@ -9,7 +9,7 @@ export const workouts = appSchema.table("workouts", {
   userId: pg
     .uuid("user_id")
     .notNull()
-    .references(() => authUsers.id),
+    .references(() => users.id),
   name: pg.text("name").notNull(),
   ...timestamps,
 });
@@ -59,7 +59,7 @@ export const exercises = appSchema.table("exercises", {
   userId: pg
     .uuid("user_id")
     .notNull()
-    .references(() => authUsers.id),
+    .references(() => users.id),
   name: pg.text("name").notNull(),
   muscleGroup: muscleGroupEnum("muscle_group").notNull(),
   muscleGroupTarget: muscleGroupTargetEnum("muscle_group_target").notNull(),
@@ -92,7 +92,7 @@ export const workoutLogs = appSchema.table(
     userId: pg
       .uuid("user_id")
       .notNull()
-      .references(() => authUsers.id),
+      .references(() => users.id),
     workoutDate: pg.date("workout_date").notNull(),
     ...timestamps,
   },

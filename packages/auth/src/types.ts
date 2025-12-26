@@ -49,10 +49,23 @@ export interface SignInPayload {
   otp: { method: OTPMethod; id: string; code: string };
 }
 
-export interface RequestOTPCodeResponse {
-  success: boolean;
-  message: string;
-}
+export const RequestOTPCodeRequestSchema = z.object({
+  method: OTPMethodSchema,
+  id: z.string(),
+});
+
+export type RequestOTPCodeRequestBody = z.infer<
+  typeof RequestOTPCodeRequestSchema
+>;
+
+export const RequestOTPCodeResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+});
+
+export type RequestOTPCodeResponseBody = z.infer<
+  typeof RequestOTPCodeResponseSchema
+>;
 
 export type SignInMethod = keyof SignInPayload;
 
@@ -70,9 +83,8 @@ export interface AuthBackend {
   confirmEmail(email: string, token: string): Promise<UserSession | null>;
 
   requestOTPCode(
-    method: OTPMethod,
-    id: string
-  ): Promise<RequestOTPCodeResponse>;
+    body: RequestOTPCodeRequestBody
+  ): Promise<RequestOTPCodeResponseBody>;
 
   getSession(): Promise<UserSession | null>;
   onAuthStateChange(callback: AuthChangeCallback): AuthChangeSubscription;

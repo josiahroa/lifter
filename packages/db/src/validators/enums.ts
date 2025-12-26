@@ -1,4 +1,4 @@
-import * as enums from "../schema/enums";
+import * as enums from "../schema/app";
 import { createSelectSchema } from "drizzle-zod";
 
 /**

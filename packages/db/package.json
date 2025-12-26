@@ -5,14 +5,21 @@
   "description": "",
   "license": "ISC",
   "scripts": {
+    "build": "tsc",
+    "prepare": "pnpm run build",
     "generate": "drizzle-kit generate",
     "migrate": "drizzle-kit migrate",
     "studio": "drizzle-kit studio",
     "test": "tsx ./scripts/test-db.ts"
   },
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
   },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "dependencies": {
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.45.1",

@@ -5,7 +5,7 @@ import type {
   AuthChangeSubscription,
   AuthBackend,
   SignInMethod,
-  RequestOTPCodeResponse,
+  RequestOTPCodeResponseBody,
   OTPMethod,
   SignInPayload,
 } from "./types";
@@ -43,8 +43,8 @@ export class AuthClient {
   requestOTPCode(
     method: OTPMethod,
     id: string
-  ): Promise<RequestOTPCodeResponse> {
-    return this.backend.requestOTPCode(method, id);
+  ): Promise<RequestOTPCodeResponseBody> {
+    return this.backend.requestOTPCode({ method, id });
   }
 
   getSession(): Promise<UserSession | null> {

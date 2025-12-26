@@ -1,5 +1,11 @@
-import { Controller, Post, Body, Version } from "@nestjs/common";
+import { Controller, Post, Body, Version, UsePipes } from "@nestjs/common";
 import { AuthService } from "./auth.service";
+import { ZodValidationPipe } from "src/lib/zod-validation-pipe";
+import {
+  type RequestOTPCodeRequestBody,
+  RequestOTPCodeRequestSchema,
+  RequestOTPCodeResponseBody,
+} from "@lifter/auth";
 
 @Controller("auth")
 export class AuthController {
@@ -7,7 +13,10 @@ export class AuthController {
 
   @Post("request-otp")
   @Version("1")
-  requestOTPCode(@Body() body: any): { success: boolean; message: string } {
+  @UsePipes(new ZodValidationPipe(RequestOTPCodeRequestSchema))
+  requestOTPCode(
+    @Body() body: RequestOTPCodeRequestBody
+  ): Promise<RequestOTPCodeResponseBody> {
     return this.authService.requestOTPCode(body);
   }
 

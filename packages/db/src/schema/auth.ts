@@ -7,7 +7,7 @@ export function lower(col: pg.AnyPgColumn): SQL {
 
 export const authSchema = pg.pgSchema("auth");
 
-export const authUsers = authSchema.table(
+export const users = authSchema.table(
   "users",
   {
     id: pg.uuid("id").primaryKey().defaultRandom(),
@@ -32,7 +32,7 @@ export const userProfiles = authSchema.table(
     userId: pg
       .uuid("user_id")
       .notNull()
-      .references(() => authUsers.id, { onDelete: "cascade" }),
+      .references(() => users.id, { onDelete: "cascade" }),
     createdAt: pg.timestamp("created_at").notNull().defaultNow(),
     updatedAt: pg.timestamp("updated_at").notNull().defaultNow(),
   },
@@ -52,7 +52,7 @@ export const authIdentities = authSchema.table(
     userId: pg
       .uuid("user_id")
       .notNull()
-      .references(() => authUsers.id),
+      .references(() => users.id),
     provider: authProvider("provider").notNull(),
     providerUserId: pg.text("provider_user_id").notNull(),
     createdAt: pg.timestamp("created_at").notNull().defaultNow(),
