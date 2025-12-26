@@ -38,6 +38,9 @@ importers:
 
   backend:
     dependencies:
+      '@lifter/db':
+        specifier: workspace:*
+        version: link:../packages/db
       '@nestjs/common':
         specifier: ^11.0.1
         version: 11.1.10(reflect-metadata@0.2.2)(rxjs@7.8.2)
