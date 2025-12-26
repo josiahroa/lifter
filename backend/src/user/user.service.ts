@@ -19,4 +19,9 @@ export class UserService {
 
     return user[0];
   }
+
+  async createUserByEmail(email: string): Promise<User> {
+    const user = await this.db.insert(users).values({ email }).returning();
+    return user[0];
+  }
 }

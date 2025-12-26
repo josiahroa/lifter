@@ -49,22 +49,53 @@ export interface SignInPayload {
   otp: { method: OTPMethod; id: string; code: string };
 }
 
-export const RequestOTPCodeRequestSchema = z.object({
-  method: OTPMethodSchema,
-  id: z.string(),
+// Create individual schemas for each OTP method
+const RequestOTPCodeEmailSchema = z.object({
+  method: z.literal("email"),
+  email: z.email(),
 });
+
+const RequestOTPCodePhoneSchema = z.object({
+  method: z.literal("phone"),
+  phone: z.string(),
+});
+
+export const RequestOTPCodeRequestSchema = z.discriminatedUnion("method", [
+  RequestOTPCodeEmailSchema,
+  RequestOTPCodePhoneSchema,
+]);
 
 export type RequestOTPCodeRequestBody = z.infer<
   typeof RequestOTPCodeRequestSchema
 >;
 
 export const RequestOTPCodeResponseSchema = z.object({
-  success: z.boolean(),
-  message: z.string(),
+  userId: z.string(),
+  method: OTPMethodSchema,
 });
 
 export type RequestOTPCodeResponseBody = z.infer<
   typeof RequestOTPCodeResponseSchema
+>;
+
+export const SignInWithOTPRequestSchema = z.object({
+  userId: z.string(),
+  /**
+   * The method of authentication, this is the method of authentication that the user will use to
+   * receive the OTP code
+   * @example "email"
+   * @example "phone"
+   */
+  method: OTPMethodSchema,
+  /**
+   * The raw OTP code that the user will enter that should match the one they received
+   * @example "123456"
+   */
+  rawOTPCode: z.string(),
+});
+
+export type SignInWithOTPRequestBody = z.infer<
+  typeof SignInWithOTPRequestSchema
 >;
 
 export type SignInMethod = keyof SignInPayload;
