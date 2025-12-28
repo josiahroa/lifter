@@ -13,6 +13,7 @@ import crypto from "crypto";
 import { Env } from "@/src/config/env.validation";
 import { ConfigService } from "@nestjs/config";
 import { z } from "zod";
+import { UserService } from "src/user/user.service";
 
 const OTPCacheSchema = z.object({
   hashedOTPCode: z.string(),
@@ -26,7 +27,8 @@ type OTPCache = z.infer<typeof OTPCacheSchema>;
 export class AuthService {
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-    private readonly configService: ConfigService<Env, true>
+    private readonly configService: ConfigService<Env, true>,
+    private readonly userService: UserService
   ) {}
 
   async startOTPChallenge(body: StartOTPRequest): Promise<StartOTPResponse> {
@@ -65,7 +67,7 @@ export class AuthService {
 
   async verifyOTPChallenge(
     body: VerifyOTPRequest
-  ): Promise<{ success: boolean; message: string }> {
+  ): Promise<{ userId: string; message: string }> {
     try {
       const parsed: VerifyOTPRequest = VerifyOTPRequestSchema.parse(body);
 
@@ -104,14 +106,28 @@ export class AuthService {
       await this.cacheManager.del(`otp:${parsed.challengeId}`);
 
       // Get existing user or create a new one with the identifier and channel
+      let user = await this.userService.getUser({
+        id: parsed.identifier,
+        idType: parsed.channel,
+      });
+
+      if (!user) {
+        console.log("creating new user");
+        user = await this.userService.createUser({
+          id: parsed.identifier,
+          idType: parsed.channel,
+        });
+      } else {
+        console.log("user already exists");
+      }
 
       // Create a new user session
 
       // Return a UserSession
       console.log(body);
       return Promise.resolve({
-        success: true,
         message: "OTP code confirmed",
+        userId: user.id,
       });
     } catch (error) {
       console.error("Error verifying OTP challenge: ", error);

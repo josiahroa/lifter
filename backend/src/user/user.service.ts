@@ -1,38 +1,53 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from "@nestjs/common";
-import { type User, type DbConnection, users, eq } from "@lifter/db";
-import { InjectDb } from "@/src/db/inject-db.decorator";
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import { type User } from "@lifter/db";
+import { z } from "zod";
+import { OTPChannelSchema } from "@lifter/auth";
+import { UserRepository } from "@lifter/db/repositories";
+
+export const GetUserOptionalParams = z.object({
+  id: z.string(),
+  idType: OTPChannelSchema,
+});
+type GetUserOptionalParams = z.infer<typeof GetUserOptionalParams>;
+
+export const CreateUserParams = z.object({
+  id: z.string(),
+  idType: OTPChannelSchema,
+});
+type CreateUserParams = z.infer<typeof CreateUserParams>;
 
 @Injectable()
 export class UserService {
-  constructor(@InjectDb() private readonly db: DbConnection) {}
+  constructor(private readonly userRepository: UserRepository) {}
 
-  async getUserByEmail(email: string): Promise<User> {
+  async getUser({ id, idType }: GetUserOptionalParams): Promise<User | null> {
     try {
-      const user = await this.db
-        .select()
-        .from(users)
-        .where(eq(users.email, email));
-
-      if (user.length === 0) {
-        throw new NotFoundException("User not found");
+      if (idType === "email") {
+        return await this.userRepository.getUserByEmail(id);
+      } else if (idType === "phone") {
+        throw new Error("getUserByPhone not implemented");
       }
-
-      return user[0];
+      throw new Error("Invalid ID type");
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      console.error("Error getting user by email: ", error);
-      throw new InternalServerErrorException("Error getting user by email");
+      console.error("Error getting user: ", error);
+      throw new InternalServerErrorException("Error getting user");
     }
   }
 
-  async createUserByEmail(email: string): Promise<User> {
-    const user = await this.db.insert(users).values({ email }).returning();
-    return user[0];
+  async createUser({ id, idType }: CreateUserParams): Promise<User> {
+    try {
+      if (idType === "email") {
+        return await this.userRepository.createUser({
+          email: id,
+          emailVerified: true,
+        });
+      } else if (idType === "phone") {
+        throw new Error("createUserByPhone not implemented");
+      }
+      throw new Error("Invalid ID type");
+    } catch (error) {
+      console.error("Error creating user: ", error);
+      throw new InternalServerErrorException("Error creating user");
+    }
   }
 }
