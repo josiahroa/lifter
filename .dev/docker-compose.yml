@@ -37,22 +37,6 @@ services:
       db:
         condition: service_healthy
 
-  backend:
-    build:
-      context: ../
-      dockerfile: backend/Dockerfile
-    ports:
-      - 3000:3000
-    environment:
-      - NODE_ENV=development
-      - DATABASE_URL=postgresql://lifter:lifter@db:5432/lifter
-      - REDIS_URL=redis://ttl-cache:6379
-    depends_on:
-      ttl-cache:
-        condition: service_healthy
-      migrate:
-        condition: service_completed_successfully
-
 volumes:
   postgres_data:
   redis_data:

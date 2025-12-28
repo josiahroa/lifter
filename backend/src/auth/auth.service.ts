@@ -1,86 +1,121 @@
+import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-  UnauthorizedException,
-} from "@nestjs/common";
-import {
-  RequestOTPCodeRequestSchema,
-  SignInWithOTPRequestSchema,
-  type RequestOTPCodeRequestBody,
-  type RequestOTPCodeResponseBody,
-  type SignInWithOTPRequestBody,
+  type StartOTPRequest,
+  type StartOTPResponse,
+  type VerifyOTPRequest,
+  OTPChannelSchema,
+  OTPPurposeSchema,
+  StartOTPRequestSchema,
+  VerifyOTPRequestSchema,
 } from "@lifter/auth";
-import { UserService } from "src/user/user.service";
-import { User } from "@lifter/db";
 import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager";
+import crypto from "crypto";
+import { Env } from "@/src/config/env.validation";
+import { ConfigService } from "@nestjs/config";
+import { z } from "zod";
+
+const OTPCacheSchema = z.object({
+  hashedOTPCode: z.string(),
+  channel: OTPChannelSchema,
+  identifier: z.string(),
+  purpose: OTPPurposeSchema,
+});
+type OTPCache = z.infer<typeof OTPCacheSchema>;
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-    private readonly userService: UserService
+    private readonly configService: ConfigService<Env, true>
   ) {}
 
-  async requestOTPCode(
-    body: RequestOTPCodeRequestBody
-  ): Promise<RequestOTPCodeResponseBody> {
-    console.log("requestOTPCode body", body);
+  async startOTPChallenge(body: StartOTPRequest): Promise<StartOTPResponse> {
+    console.log("startOTPChallenge body", body);
 
-    const parsed: RequestOTPCodeRequestBody =
-      RequestOTPCodeRequestSchema.parse(body);
+    const parsed: StartOTPRequest = StartOTPRequestSchema.parse(body);
 
-    // 1. Get the user from the database, if the user does not exist, create a new user
-    let user: User;
-    if (parsed.method === "email") {
-      user = await this.userService.getUserByEmail(parsed.email);
-      if (!user) {
-        user = await this.userService.createUserByEmail(parsed.email);
-      }
-    } else {
-      throw new InternalServerErrorException(
-        "Phone number authentication is not supported yet"
-      );
-    }
+    const challengeId = crypto.randomUUID();
 
-    // 2. Generate a random 6 digit OTP code, hash it and store it in the cache
+    // Generate a random 6 digit OTP code and hash it with the secret key
+    const otp = crypto.randomInt(100000, 1000000).toString();
+    const hash = crypto
+      .createHmac(
+        "sha256",
+        this.configService.get("OTP_SECRET", { infer: true })
+      )
+      .update(otp)
+      .digest("hex");
 
-    await this.cacheManager.set(
-      `otp:${user.id}:${parsed.method}`,
-      "123456",
-      300000
-    );
+    console.log("otp", otp);
 
-    return {
-      userId: user.id,
-      method: parsed.method,
+    // Store the hashed OTP code in the cache for 5 minutes
+    const key = `otp:${challengeId}`;
+    const value: OTPCache = {
+      hashedOTPCode: hash,
+      purpose: parsed.purpose,
+      channel: parsed.channel,
+      identifier: parsed.identifier,
     };
+    await this.cacheManager.set(key, value, 300000);
+
+    console.log("otp stored in cache successfully: ", key);
+
+    return { challengeId };
   }
 
-  async confirmOTPCode(
-    body: SignInWithOTPRequestBody
+  async verifyOTPChallenge(
+    body: VerifyOTPRequest
   ): Promise<{ success: boolean; message: string }> {
-    const parsed: SignInWithOTPRequestBody =
-      SignInWithOTPRequestSchema.parse(body);
+    try {
+      const parsed: VerifyOTPRequest = VerifyOTPRequestSchema.parse(body);
 
-    const hashedOTPCode = await this.cacheManager.get(
-      `otp:${parsed.userId}:${parsed.method}`
-    );
+      const cachedValue = await this.cacheManager.get(
+        `otp:${parsed.challengeId}`
+      );
 
-    // Check if the OTP code is expired
+      const parsedCachedValue = OTPCacheSchema.parse(cachedValue);
+      const hashedOTPCode = parsedCachedValue.hashedOTPCode;
 
-    // Use the same hashing function as the one used to generate the OTP code
-    // Determine if the hashed OTP codes match
+      if (parsedCachedValue.channel !== parsed.channel) {
+        throw new UnauthorizedException("Invalid OTP channel");
+      }
 
-    if (hashedOTPCode !== body.rawOTPCode) {
+      if (parsedCachedValue.identifier !== parsed.identifier) {
+        throw new UnauthorizedException("Invalid OTP identifier");
+      }
+
+      if (parsedCachedValue.purpose !== parsed.purpose) {
+        throw new UnauthorizedException("Invalid OTP purpose");
+      }
+
+      const receivedOTPCodeHash = crypto
+        .createHmac(
+          "sha256",
+          this.configService.get("OTP_SECRET", { infer: true })
+        )
+        .update(parsed.code)
+        .digest("hex");
+
+      if (hashedOTPCode !== receivedOTPCodeHash) {
+        throw new UnauthorizedException("Invalid OTP code");
+      }
+
+      // Delete the cached value after successful verification
+      await this.cacheManager.del(`otp:${parsed.challengeId}`);
+
+      // Get existing user or create a new one with the identifier and channel
+
+      // Create a new user session
+
+      // Return a UserSession
+      console.log(body);
+      return Promise.resolve({
+        success: true,
+        message: "OTP code confirmed",
+      });
+    } catch (error) {
+      console.error("Error verifying OTP challenge: ", error);
       throw new UnauthorizedException("Invalid OTP code");
     }
-
-    // 3. Return a JWT token for the user
-    console.log(body);
-    return Promise.resolve({
-      success: true,
-      message: "OTP code confirmed",
-    });
   }
 }

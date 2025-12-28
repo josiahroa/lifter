@@ -32,3 +32,18 @@ export type DbConnection = ReturnType<typeof createDbConnection>;
 export * from "./schema";
 export * from "./validators";
 export * from "./types";
+
+export {
+  eq,
+  and,
+  or,
+  sql,
+  inArray,
+  like,
+  ilike,
+  gt,
+  lt,
+  gte,
+  lte,
+  ne,
+} from "drizzle-orm";

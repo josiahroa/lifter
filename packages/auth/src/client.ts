@@ -5,9 +5,9 @@ import type {
   AuthChangeSubscription,
   AuthBackend,
   SignInMethod,
-  RequestOTPCodeResponseBody,
-  RequestOTPCodeRequestBody,
   SignInPayload,
+  StartOTPRequest,
+  StartOTPResponse,
 } from "./types";
 
 export class AuthClient {
@@ -40,10 +40,8 @@ export class AuthClient {
     return this.backend.confirmEmail(email, token);
   }
 
-  requestOTPCode(
-    request: RequestOTPCodeRequestBody
-  ): Promise<RequestOTPCodeResponseBody> {
-    return this.backend.requestOTPCode(request);
+  startOTPChallenge(request: StartOTPRequest): Promise<StartOTPResponse> {
+    return this.backend.startOTPChallenge(request);
   }
 
   getSession(): Promise<UserSession | null> {

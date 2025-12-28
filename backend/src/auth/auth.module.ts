@@ -7,6 +7,7 @@ import { CacheModule } from "@nestjs/cache-manager";
 import { ConfigService } from "@nestjs/config";
 import { Env } from "src/config/env.validation";
 import KeyvRedis from "@keyv/redis";
+import { ConfigModule } from "@nestjs/config";
 
 @Module({
   controllers: [AuthController],
@@ -22,6 +23,7 @@ import KeyvRedis from "@keyv/redis";
         };
       },
     }),
+    ConfigModule,
   ],
 })
 export class AuthModule {}

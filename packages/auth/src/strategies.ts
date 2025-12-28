@@ -27,7 +27,7 @@ export class EmailPasswordStrategy extends BaseSignInStrategy<
 
 export class OTPStrategy extends BaseSignInStrategy<SignInPayload["otp"]> {
   signIn(input: SignInPayload["otp"]) {
-    return this.backend.signInWithOTP(input.method, input.id, input.code);
+    return this.backend.signInWithOTP(input);
   }
 }
 

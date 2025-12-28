@@ -5,7 +5,6 @@ export const UserSessionSchema = z.object({
   expiresAt: z.number(),
   user: z.object({
     id: z.string(),
-    email: z.string(),
   }),
   // optional fields
   email: z.string().optional(),
@@ -27,10 +26,6 @@ export const AuthChangeEventSchema = z.enum([
 
 export type AuthChangeEvent = z.infer<typeof AuthChangeEventSchema>;
 
-export const OTPMethodSchema = z.enum(["email", "phone"]);
-
-export type OTPMethod = z.infer<typeof OTPMethodSchema>;
-
 export type AuthChangeCallback = (
   event: AuthChangeEvent,
   session: UserSession | null
@@ -42,80 +37,63 @@ export interface AuthChangeSubscription {
   unsubscribe: () => void;
 }
 
-export interface SignInPayload {
-  email: { email: string; password: string };
-  google: { code: string };
-  apple: { code: string };
-  otp: { method: OTPMethod; id: string; code: string };
-}
+export const OTPChannelSchema = z.enum(["email", "phone"]);
+export type OTPChannel = z.infer<typeof OTPChannelSchema>;
 
-// Create individual schemas for each OTP method
-const RequestOTPCodeEmailSchema = z.object({
-  method: z.literal("email"),
-  email: z.email(),
+export const OTPPurposeSchema = z.enum(["sign_in"]);
+export type OTPPurpose = z.infer<typeof OTPPurposeSchema>;
+
+export const StartOTPRequestSchema = z.object({
+  channel: OTPChannelSchema,
+  identifier: z.string(),
+  purpose: OTPPurposeSchema,
 });
+export type StartOTPRequest = z.infer<typeof StartOTPRequestSchema>;
 
-const RequestOTPCodePhoneSchema = z.object({
-  method: z.literal("phone"),
-  phone: z.string(),
+export const StartOTPResponseSchema = z.object({
+  challengeId: z.string(),
 });
+export type StartOTPResponse = z.infer<typeof StartOTPResponseSchema>;
 
-export const RequestOTPCodeRequestSchema = z.discriminatedUnion("method", [
-  RequestOTPCodeEmailSchema,
-  RequestOTPCodePhoneSchema,
-]);
-
-export type RequestOTPCodeRequestBody = z.infer<
-  typeof RequestOTPCodeRequestSchema
->;
-
-export const RequestOTPCodeResponseSchema = z.object({
-  userId: z.string(),
-  method: OTPMethodSchema,
+export const VerifyOTPRequestSchema = z.object({
+  channel: OTPChannelSchema,
+  identifier: z.string(),
+  purpose: OTPPurposeSchema,
+  challengeId: z.string(),
+  code: z.string(),
 });
+export type VerifyOTPRequest = z.infer<typeof VerifyOTPRequestSchema>;
 
-export type RequestOTPCodeResponseBody = z.infer<
-  typeof RequestOTPCodeResponseSchema
->;
-
-export const SignInWithOTPRequestSchema = z.object({
-  userId: z.string(),
-  /**
-   * The method of authentication, this is the method of authentication that the user will use to
-   * receive the OTP code
-   * @example "email"
-   * @example "phone"
-   */
-  method: OTPMethodSchema,
-  /**
-   * The raw OTP code that the user will enter that should match the one they received
-   * @example "123456"
-   */
-  rawOTPCode: z.string(),
+export const SignInPayloadSchema = z.object({
+  email: z.object({ email: z.string(), password: z.string() }),
+  google: z.object({ code: z.string() }),
+  apple: z.object({ code: z.string() }),
+  otp: VerifyOTPRequestSchema,
 });
-
-export type SignInWithOTPRequestBody = z.infer<
-  typeof SignInWithOTPRequestSchema
->;
-
+export type SignInPayload = z.infer<typeof SignInPayloadSchema>;
 export type SignInMethod = keyof SignInPayload;
 
 export interface AuthBackend {
   signInWithEmail(email: string, password: string): Promise<UserSession | null>;
-  signInWithOTP(
-    method: OTPMethod,
-    id: string,
-    code: string
-  ): Promise<UserSession | null>;
+  /**
+   * Verify a challenge with the OTP code sent to the channel specified in the StartOTPRequest.
+   * If the OTP code is valid, the client will be authenticated and a user session will be returned.
+   * @param body - The request body containing the challenge ID and code
+   * @returns The user session if successful, null otherwise
+   */
+  signInWithOTP(body: VerifyOTPRequest): Promise<UserSession | null>;
   signInWithGoogle(code: string): Promise<UserSession | null>;
   signInWithApple(code: string): Promise<UserSession | null>;
 
   signUpWithEmail(email: string, password: string): Promise<UserSession | null>;
   confirmEmail(email: string, token: string): Promise<UserSession | null>;
 
-  requestOTPCode(
-    body: RequestOTPCodeRequestBody
-  ): Promise<RequestOTPCodeResponseBody>;
+  /**
+   * Starts an OTP challenge for the given channel, identifier, and purpose
+   * @param body - The request body containing the channel, identifier, and purpose
+   * @returns The response containing the challenge ID
+   */
+  startOTPChallenge(body: StartOTPRequest): Promise<StartOTPResponse>;
 
   getSession(): Promise<UserSession | null>;
   onAuthStateChange(callback: AuthChangeCallback): AuthChangeSubscription;
