@@ -14,6 +14,8 @@ import { Env } from "@/src/config/env.validation";
 import { ConfigService } from "@nestjs/config";
 import { z } from "zod";
 import { UserService } from "src/user/user.service";
+import { JwtService } from "@nestjs/jwt";
+import { UserSession } from "@lifter/auth";
 
 const OTPCacheSchema = z.object({
   hashedOTPCode: z.string(),
@@ -28,10 +30,12 @@ export class AuthService {
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly configService: ConfigService<Env, true>,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService
   ) {}
 
   async startOTPChallenge(body: StartOTPRequest): Promise<StartOTPResponse> {
+    // TODO: Remove, this is for development
     console.log("startOTPChallenge body", body);
 
     const parsed: StartOTPRequest = StartOTPRequestSchema.parse(body);
@@ -48,6 +52,7 @@ export class AuthService {
       .update(otp)
       .digest("hex");
 
+    // TODO: Remove, this is for development
     console.log("otp", otp);
 
     // Store the hashed OTP code in the cache for 5 minutes
@@ -60,14 +65,13 @@ export class AuthService {
     };
     await this.cacheManager.set(key, value, 300000);
 
+    // TODO: Remove, this is for development
     console.log("otp stored in cache successfully: ", key);
 
     return { challengeId };
   }
 
-  async verifyOTPChallenge(
-    body: VerifyOTPRequest
-  ): Promise<{ userId: string; message: string }> {
+  async verifyOTPChallenge(body: VerifyOTPRequest): Promise<unknown> {
     try {
       const parsed: VerifyOTPRequest = VerifyOTPRequestSchema.parse(body);
 
@@ -122,16 +126,20 @@ export class AuthService {
       }
 
       // Create a new user session
-
-      // Return a UserSession
-      console.log(body);
-      return Promise.resolve({
-        message: "OTP code confirmed",
-        userId: user.id,
-      });
+      return this.createUserSession(user.id);
     } catch (error) {
       console.error("Error verifying OTP challenge: ", error);
-      throw new UnauthorizedException("Invalid OTP code");
+      throw new UnauthorizedException("Unauthorized");
     }
+  }
+
+  createUserSession(userId: string): UserSession {
+    const accessToken = this.jwtService.sign({ sub: userId });
+
+    return {
+      user: { id: userId },
+      accessToken,
+      expiresAt: Date.now() + 1000 * 60 * 60 * 24,
+    };
   }
 }

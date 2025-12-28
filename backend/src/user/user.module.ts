@@ -3,8 +3,10 @@ import { UserService } from "./user.service";
 import { UserRepository } from "@lifter/db/repositories";
 import { DB_CONNECTION } from "@/src/db/db.module";
 import { DbConnection } from "@lifter/db";
+import { UserController } from "./user.controller";
 
 @Module({
+  controllers: [UserController],
   providers: [
     {
       provide: UserRepository,
