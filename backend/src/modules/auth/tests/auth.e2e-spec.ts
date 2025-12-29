@@ -1,6 +1,6 @@
 import { INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
-import { AppModule } from "../app.module";
+import { AppModule } from "../../../app.module";
 import { beforeEach, describe, expect, it } from "vitest";
 
 describe("Auth", () => {

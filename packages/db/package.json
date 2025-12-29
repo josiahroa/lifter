@@ -20,6 +20,10 @@
     "./repositories": {
       "types": "./dist/repositories/index.d.ts",
       "default": "./dist/repositories/index.js"
+    },
+    "./stores": {
+      "types": "./dist/stores/index.d.ts",
+      "default": "./dist/stores/index.js"
     }
   },
   "main": "./dist/index.js",

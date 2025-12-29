@@ -73,6 +73,11 @@ export const SignInPayloadSchema = z.object({
 export type SignInPayload = z.infer<typeof SignInPayloadSchema>;
 export type SignInMethod = keyof SignInPayload;
 
+export const RefreshTokenRequestSchema = z.object({
+  refreshToken: z.string(),
+});
+export type RefreshTokenRequest = z.infer<typeof RefreshTokenRequestSchema>;
+
 export interface AuthBackend {
   signInWithEmail(email: string, password: string): Promise<UserSession | null>;
   /**

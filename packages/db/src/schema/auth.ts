@@ -64,3 +64,44 @@ export const authIdentities = authSchema.table(
       .on(t.provider, t.providerUserId),
   ]
 );
+
+export const sessions = authSchema.table(
+  "sessions",
+  {
+    id: pg.uuid("id").primaryKey().defaultRandom(),
+    userId: pg
+      .uuid("user_id")
+      .notNull()
+      .references(() => users.id),
+    revokedAt: pg.timestamp("revoked_at"),
+
+    createdAt: pg.timestamp("created_at").notNull().defaultNow(),
+    updatedAt: pg.timestamp("updated_at").notNull().defaultNow(),
+  },
+  (t) => [pg.index("sessions_user_id_index").on(t.userId)]
+);
+
+export const refreshTokens = authSchema.table(
+  "refresh_tokens",
+  {
+    id: pg.uuid("id").primaryKey().defaultRandom(),
+    sessionId: pg
+      .uuid("session_id")
+      .notNull()
+      .references(() => sessions.id),
+
+    tokenHash: pg.text("token_hash").notNull(),
+    expiresAt: pg.timestamp("expires_at").notNull(),
+
+    revokedAt: pg.timestamp("revoked_at"),
+    rotatedAt: pg.timestamp("rotated_at"),
+    replacedBy: pg.text("replaced_by"),
+
+    createdAt: pg.timestamp("created_at").notNull().defaultNow(),
+    updatedAt: pg.timestamp("updated_at").notNull().defaultNow(),
+  },
+  (t) => [
+    pg.uniqueIndex("refresh_tokens_token_hash_unique").on(t.tokenHash),
+    pg.index("refresh_tokens_session_id_index").on(t.sessionId),
+  ]
+);

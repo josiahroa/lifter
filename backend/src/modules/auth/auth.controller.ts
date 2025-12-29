@@ -5,8 +5,10 @@ import {
   type StartOTPRequest,
   type StartOTPResponse,
   type VerifyOTPRequest,
+  type RefreshTokenRequest,
   StartOTPRequestSchema,
   VerifyOTPRequestSchema,
+  RefreshTokenRequestSchema,
 } from "@lifter/auth";
 
 @Controller("auth")
@@ -25,5 +27,12 @@ export class AuthController {
   @UsePipes(new ZodValidationPipe(VerifyOTPRequestSchema))
   verifyOTPChallenge(@Body() body: VerifyOTPRequest): Promise<unknown> {
     return this.authService.verifyOTPChallenge(body);
+  }
+
+  @Post("refresh")
+  @Version("1")
+  @UsePipes(new ZodValidationPipe(RefreshTokenRequestSchema))
+  refreshToken(@Body() body: RefreshTokenRequest): Promise<unknown> {
+    return this.authService.refreshToken(body);
   }
 }

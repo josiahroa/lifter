@@ -1,4 +1,5 @@
-import { type DbConnection, type User, users } from "..";
+import { users } from "@/src/schema/auth";
+import type { DbLike, User } from "@/src/types";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
@@ -16,7 +17,7 @@ const UserInsertSchema = z
 type UserInsert = z.infer<typeof UserInsertSchema>;
 
 export class UserRepository {
-  constructor(private readonly db: DbConnection) {}
+  constructor(private readonly db: DbLike) {}
 
   async createUser(user: UserInsert): Promise<User> {
     const validatedUser = UserInsertSchema.parse(user);

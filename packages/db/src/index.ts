@@ -27,8 +27,6 @@ export function createDbConnection(connectionString: string) {
   });
 }
 
-export type DbConnection = ReturnType<typeof createDbConnection>;
-
 export * from "./schema";
 export * from "./validators";
 export * from "./types";

@@ -1,10 +1,11 @@
 import { Module } from "@nestjs/common";
-import { AuthModule } from "./auth/auth.module";
+import { AuthModule } from "./modules/auth/auth.module";
 import { AppController } from "./app.controller";
-import { UserModule } from "./user/user.module";
-import { DbModule } from "./db/db.module";
+import { UserModule } from "./modules/user/user.module";
+import { DbModule } from "./modules/db/db.module";
 import { ConfigModule } from "@nestjs/config";
 import { envSchema } from "./config/env.validation";
+import { SessionModule } from "./modules/session/session.module";
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { envSchema } from "./config/env.validation";
     AuthModule,
     UserModule,
     DbModule,
+    SessionModule,
   ],
   controllers: [AppController],
 })
