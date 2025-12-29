@@ -10,11 +10,9 @@ import { Env } from "@/src/config/env.validation";
       inject: [ConfigService],
       useFactory: (configService: ConfigService<Env, true>) => {
         const jwtSecret = configService.get("JWT_SECRET", { infer: true });
-        const jwtExpiresIn = configService.get("JWT_EXPIRES_IN");
 
         return {
           secret: jwtSecret,
-          signOptions: { expiresIn: jwtExpiresIn },
         };
       },
     }),

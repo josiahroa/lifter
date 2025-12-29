@@ -5,7 +5,7 @@
   "description": "",
   "license": "ISC",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsc-alias",
     "prepare": "pnpm run build",
     "generate": "drizzle-kit generate",
     "migrate": "drizzle-kit migrate",

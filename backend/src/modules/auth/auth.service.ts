@@ -28,9 +28,9 @@ type OTPCache = z.infer<typeof OTPCacheSchema>;
 export class AuthService {
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly sessionService: SessionService,
     private readonly configService: ConfigService<Env, true>,
-    private readonly userService: UserService,
-    private readonly sessionService: SessionService
+    private readonly userService: UserService
   ) {}
 
   async startOTPChallenge(body: StartOTPRequest): Promise<StartOTPResponse> {
@@ -120,15 +120,7 @@ export class AuthService {
         console.log("user already exists");
       }
 
-      // Create a new user session
-      const session = await this.sessionService.issueSession(user.id);
-      console.log("session", session);
-
-      return {
-        user: { id: user.id },
-        accessToken: "",
-        expiresAt: Date.now() + 1000 * 60 * 60 * 24,
-      };
+      return await this.sessionService.issueSession(user.id);
     } catch (error) {
       console.error("Error verifying OTP challenge: ", error);
       throw new UnauthorizedException("Unauthorized");
@@ -138,11 +130,6 @@ export class AuthService {
   async refreshToken(body: RefreshTokenRequest): Promise<UserSession> {
     console.log("refreshToken body", body);
 
-    return Promise.resolve({
-      user: { id: "123" },
-      accessToken: "123",
-      refreshToken: "123",
-      expiresAt: Date.now() + 1000 * 60 * 60 * 24,
-    });
+    return await this.sessionService.refreshSession(body.refreshToken);
   }
 }

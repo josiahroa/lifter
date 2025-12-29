@@ -9,6 +9,7 @@ import KeyvRedis from "@keyv/redis";
 import { ConfigModule } from "@nestjs/config";
 import { JwtStrategy } from "./strategies/jwt-auth.strategy";
 import { PassportModule } from "@nestjs/passport";
+import { SessionModule } from "../session/session.module";
 
 @Module({
   controllers: [AuthController],
@@ -17,6 +18,7 @@ import { PassportModule } from "@nestjs/passport";
     UserModule,
     ConfigModule,
     PassportModule,
+    SessionModule,
     CacheModule.registerAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService<Env, true>) => {

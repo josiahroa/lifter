@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "HTTP client for Lifter",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsc-alias",
     "prepare": "pnpm run build",
     "test": "vitest run"
   },

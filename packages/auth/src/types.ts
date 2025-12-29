@@ -2,14 +2,11 @@ import { z } from "zod";
 
 export const UserSessionSchema = z.object({
   accessToken: z.string(),
-  expiresAt: z.number(),
+  refreshToken: z.string(),
+  expiresAt: z.date(),
   user: z.object({
     id: z.string(),
   }),
-  // optional fields
-  email: z.string().optional(),
-  refreshToken: z.string().optional(),
-  expiresIn: z.number().optional(),
 });
 
 export type UserSession = z.infer<typeof UserSessionSchema>;

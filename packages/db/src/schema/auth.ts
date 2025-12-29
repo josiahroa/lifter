@@ -72,8 +72,8 @@ export const sessions = authSchema.table(
     userId: pg
       .uuid("user_id")
       .notNull()
-      .references(() => users.id),
-    revokedAt: pg.timestamp("revoked_at"),
+      .references(() => users.id, { onDelete: "cascade" }),
+    revokedAt: pg.timestamp("revoked_at", { withTimezone: true }),
 
     createdAt: pg.timestamp("created_at").notNull().defaultNow(),
     updatedAt: pg.timestamp("updated_at").notNull().defaultNow(),
@@ -88,14 +88,14 @@ export const refreshTokens = authSchema.table(
     sessionId: pg
       .uuid("session_id")
       .notNull()
-      .references(() => sessions.id),
+      .references(() => sessions.id, { onDelete: "cascade" }),
 
     tokenHash: pg.text("token_hash").notNull(),
-    expiresAt: pg.timestamp("expires_at").notNull(),
+    replacedByHash: pg.text("replaced_by_hash"),
 
-    revokedAt: pg.timestamp("revoked_at"),
-    rotatedAt: pg.timestamp("rotated_at"),
-    replacedBy: pg.text("replaced_by"),
+    expiresAt: pg.timestamp("expires_at", { withTimezone: true }).notNull(),
+    revokedAt: pg.timestamp("revoked_at", { withTimezone: true }),
+    rotatedAt: pg.timestamp("rotated_at", { withTimezone: true }),
 
     createdAt: pg.timestamp("created_at").notNull().defaultNow(),
     updatedAt: pg.timestamp("updated_at").notNull().defaultNow(),
@@ -103,5 +103,6 @@ export const refreshTokens = authSchema.table(
   (t) => [
     pg.uniqueIndex("refresh_tokens_token_hash_unique").on(t.tokenHash),
     pg.index("refresh_tokens_session_id_index").on(t.sessionId),
+    pg.index("refresh_tokens_expires_at_index").on(t.expiresAt),
   ]
 );
