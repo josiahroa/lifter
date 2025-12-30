@@ -1,7 +1,8 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
-import { type User } from "@lifter/db";
 import { z } from "zod";
+
 import { OTPChannelSchema } from "@lifter/auth";
+import { type User } from "@lifter/db";
 import { UserRepository } from "@lifter/db/repositories";
 
 export const GetUserOptionalParams = z.object({

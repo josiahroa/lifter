@@ -1,4 +1,5 @@
 import { Controller, Get, Query, UseGuards, Version } from "@nestjs/common";
+
 import { JwtAuthGuard } from "@/src/modules/auth/guards/jwt-auth.guard";
 
 @Controller("user")

@@ -1,15 +1,22 @@
 import { Controller, Post, Body, Version, UsePipes } from "@nestjs/common";
-import { AuthService } from "./auth.service";
-import { ZodValidationPipe } from "@/src/lib/zod-validation-pipe";
+
 import {
   type StartOTPRequest,
   type StartOTPResponse,
   type VerifyOTPRequest,
-  type RefreshTokenRequest,
   StartOTPRequestSchema,
   VerifyOTPRequestSchema,
-  RefreshTokenRequestSchema,
 } from "@lifter/auth";
+
+import { AuthService } from "./auth.service";
+import {
+  AuthRefreshDtoSchema,
+  AuthSessionResponseDtoSchema,
+  type AuthRefreshDto,
+  type AuthSessionResponseDto,
+} from "./dto/refresh-session.dto";
+
+import { ZodValidationPipe } from "@/src/lib/zod-validation-pipe";
 
 @Controller("auth")
 export class AuthController {
@@ -31,8 +38,11 @@ export class AuthController {
 
   @Post("refresh")
   @Version("1")
-  @UsePipes(new ZodValidationPipe(RefreshTokenRequestSchema))
-  refreshToken(@Body() body: RefreshTokenRequest): Promise<unknown> {
-    return this.authService.refreshToken(body);
+  @UsePipes(new ZodValidationPipe(AuthRefreshDtoSchema))
+  async refreshToken(
+    @Body() body: AuthRefreshDto
+  ): Promise<AuthSessionResponseDto> {
+    const session = await this.authService.refreshToken(body);
+    return AuthSessionResponseDtoSchema.parse(session);
   }
 }

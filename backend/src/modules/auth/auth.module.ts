@@ -1,15 +1,18 @@
+import KeyvRedis from "@keyv/redis";
+import { CacheModule } from "@nestjs/cache-manager";
 import { Module } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { ConfigModule } from "@nestjs/config";
+import { PassportModule } from "@nestjs/passport";
+import { Env } from "src/config/env.validation";
+
+import { SessionModule } from "../session/session.module";
+
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
-import { UserModule } from "@/src/modules/user/user.module";
-import { CacheModule } from "@nestjs/cache-manager";
-import { ConfigService } from "@nestjs/config";
-import { Env } from "src/config/env.validation";
-import KeyvRedis from "@keyv/redis";
-import { ConfigModule } from "@nestjs/config";
 import { JwtStrategy } from "./strategies/jwt-auth.strategy";
-import { PassportModule } from "@nestjs/passport";
-import { SessionModule } from "../session/session.module";
+
+import { UserModule } from "@/src/modules/user/user.module";
 
 @Module({
   controllers: [AuthController],

@@ -1,12 +1,14 @@
+import { OPSqliteOpenFactory } from "@powersync/op-sqlite";
 import {
   PowerSyncDatabase,
   createBaseLogger,
   LogLevel,
 } from "@powersync/react-native";
-import { OPSqliteOpenFactory } from "@powersync/op-sqlite";
-import { AppSchema } from "./schema";
-import { Connector } from "./connector";
 import { createContext, useContext } from "react";
+
+import { Connector } from "./connector";
+import { AppSchema } from "./schema";
+
 
 const logger = createBaseLogger();
 logger.useDefaults();

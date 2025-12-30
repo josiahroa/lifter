@@ -4,10 +4,10 @@
   "private": true,
   "description": "Lifter workspace - mobile app and shared packages",
   "scripts": {
-    "db:generate": "pnpm --filter @lifter/db generate",
-    "db:migrate": "pnpm --filter @lifter/db migrate",
-    "db:studio": "pnpm --filter @lifter/db studio",
-    "db:test": "pnpm --filter @lifter/db test",
+    "db:generate": "pnpm --filter @lifter/backend db:generate",
+    "db:migrate": "pnpm --filter @lifter/backend db:migrate",
+    "db:studio": "pnpm --filter @lifter/backend db:studio",
+    "db:test": "pnpm --filter @lifter/backend db:test",
     "lint": "eslint .",
     "mobile": "pnpm --filter @lifter/mobile",
     "mobile:start": "pnpm --filter @lifter/mobile start",
@@ -31,10 +31,9 @@
     "@eslint/js": "^9.39.2",
     "@types/node": "^25.0.3",
     "@typescript-eslint/eslint-plugin": "^8.50.0",
-    "@typescript-eslint/parser": "^8.50.0",
     "eslint": "^9.39.2",
-    "eslint-plugin-drizzle": "^0.2.3",
-    "tsc-alias": "^1.8.16",
+    "eslint-plugin-import": "^2.32.0",
+    "globals": "^16.0.0",
     "typescript": "~5.9.2",
     "typescript-eslint": "^8.50.0"
   }

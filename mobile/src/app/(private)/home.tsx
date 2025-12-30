@@ -1,5 +1,6 @@
-import { auth } from "@/src/lib/auth-client";
 import { View, Text, TouchableOpacity } from "react-native";
+
+import { auth } from "@/src/lib/auth-client";
 
 export default function Home() {
   return (

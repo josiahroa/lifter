@@ -1,11 +1,13 @@
 import axios, { AxiosInstance, AxiosError } from "axios";
+
+import { HttpError } from "../types";
+
 import type {
   HttpClient,
   HttpMethod,
   HttpRequestOptions,
   HttpResponse,
 } from "../types";
-import { HttpError } from "../types";
 
 function normalizeHeaders(headers: unknown): Record<string, string> {
   const out: Record<string, string> = {};

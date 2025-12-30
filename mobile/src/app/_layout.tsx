@@ -1,10 +1,12 @@
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+
 import "react-native-reanimated";
 import "../../global.css";
-import { AuthProvider, useAuth } from "../components/providers/auth-provider";
 import { ActivityIndicator, View } from "react-native";
+
+import { AuthProvider, useAuth } from "../components/providers/auth-provider";
 
 export {
   // Catch any errors thrown by the Layout component.

@@ -1,8 +1,9 @@
-import { LifterAuthBackend } from "./backend/auth";
-import { AxiosHttpClient } from "@lifter/http/clients";
 import type { AuthBackend } from "@lifter/auth";
 import { AuthClient } from "@lifter/auth";
 import { SignInStrategyFactory } from "@lifter/auth/strategies";
+import { AxiosHttpClient } from "@lifter/http/clients";
+
+import { LifterAuthBackend } from "./backend/auth";
 
 function createAuthClient(backend: AuthBackend): AuthClient {
   return new AuthClient(backend, new SignInStrategyFactory());

@@ -1,7 +1,9 @@
-import { SessionService } from "./session.service";
 import { Module } from "@nestjs/common";
-import { JwtModule } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
+import { JwtModule } from "@nestjs/jwt";
+
+import { SessionService } from "./session.service";
+
 import { Env } from "@/src/config/env.validation";
 
 @Module({

@@ -30,7 +30,7 @@ services:
   migrate:
     build:
       context: ../
-      dockerfile: packages/db/Dockerfile.migrate
+      dockerfile: backend/Dockerfile.migrate
     environment:
       - DATABASE_URL=postgresql://lifter:lifter@db:5432/lifter
     depends_on:

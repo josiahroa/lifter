@@ -1,6 +1,7 @@
-import { createDbConnection, type Db } from "@lifter/db";
 import { Global, Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+
+import { createDbConnection, type Db } from "@lifter/db";
 
 export const DB_CONNECTION = "DB_CONNECTION";
 

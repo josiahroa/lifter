@@ -1,11 +1,12 @@
 import { Module } from "@nestjs/common";
-import { AuthModule } from "./modules/auth/auth.module";
-import { AppController } from "./app.controller";
-import { UserModule } from "./modules/user/user.module";
-import { DbModule } from "./modules/db/db.module";
 import { ConfigModule } from "@nestjs/config";
+
+import { AppController } from "./app.controller";
 import { envSchema } from "./config/env.validation";
+import { AuthModule } from "./modules/auth/auth.module";
+import { DbModule } from "./modules/db/db.module";
 import { SessionModule } from "./modules/session/session.module";
+import { UserModule } from "./modules/user/user.module";
 
 @Module({
   imports: [

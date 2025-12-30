@@ -1,9 +1,9 @@
-// @ts-nocheck - This is necessary to disable the type errors for the eslint-plugin-drizzle package
 import eslint from "@eslint/js";
 import { defineConfig } from "eslint/config";
 import tseslint from "typescript-eslint";
-import drizzle from "eslint-plugin-drizzle";
-import parser from "@typescript-eslint/parser";
+// import parser from "@typescript-eslint/parser";
+import importPlugin from "eslint-plugin-import";
+import globals from "globals";
 
 export default defineConfig(
   eslint.configs.recommended,
@@ -19,32 +19,89 @@ export default defineConfig(
       "**/*.config.mjs",
       "**/*.config.ts",
       "**/*.config.js",
-      /**
-       * The backend module utilizes its own eslint config as
-       * recommended by NestJS.
-       */
-      "backend/**",
     ],
   },
+  // {
+  //   // Global configuration for all other TypeScript files
+  //   files: ["**/*.ts", "**/*.tsx"],
+  //   languageOptions: {
+  //     parser,
+  //     parserOptions: {
+  //       projectService: true,
+  //       tsconfigRootDir: import.meta.dirname,
+  //     },
+  //   },
+  // },
+  // Backend-specific configuration (NestJS)
+  ...tseslint.configs.recommendedTypeChecked.map((config) => ({
+    ...config,
+    files: ["backend/**/*.ts"],
+  })),
   {
-    // Global configuration for all other TypeScript files
-    files: ["**/*.ts", "**/*.tsx"],
+    files: ["backend/**/*.ts"],
     languageOptions: {
-      parser,
+      globals: {
+        ...globals.node,
+        ...globals.jest,
+      },
+      sourceType: "commonjs",
       parserOptions: {
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
     },
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-floating-promises": "warn",
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-unsafe-return": "off",
+    },
   },
   {
-    // Drizzle-specific rules only for db package
-    files: ["packages/db/src/**/*.ts"],
+    files: ["**/*.ts", "**/*.tsx"],
     plugins: {
-      drizzle,
+      import: importPlugin,
+    },
+    settings: {
+      "import/parsers": {
+        "@typescript-eslint/parser": [".ts", ".tsx"],
+      },
+      "import/resolver": {
+        node: true,
+      },
     },
     rules: {
-      ...drizzle.configs.all.rules,
+      "import/order": [
+        "error",
+        {
+          groups: [
+            "builtin", // Built-in imports (come from NodeJS)
+            "external", // npm install packages
+            "internal", // Imports from within the project
+            "parent", // Imports from parent directory
+            "sibling", // Imports from same directory
+            "index", // Imports from index file
+            "object", // Object imports
+            "type", // Type imports
+          ],
+          pathGroups: [
+            {
+              pattern: "@lifter/**",
+              group: "internal",
+              position: "before",
+            },
+          ],
+          pathGroupsExcludedImportTypes: ["builtin"],
+          "newlines-between": "always",
+          alphabetize: {
+            order: "asc",
+            caseInsensitive: true,
+          },
+        },
+      ],
     },
   }
 );

@@ -1,20 +1,25 @@
+import crypto from "crypto";
+
+import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager";
 import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { z } from "zod";
+
 import {
   type StartOTPRequest,
   type StartOTPResponse,
   type VerifyOTPRequest,
   OTPChannelSchema,
   OTPPurposeSchema,
-  RefreshTokenRequest,
   UserSession,
 } from "@lifter/auth";
-import { CACHE_MANAGER, Cache } from "@nestjs/cache-manager";
-import crypto from "crypto";
-import { Env } from "@/src/config/env.validation";
-import { ConfigService } from "@nestjs/config";
-import { z } from "zod";
-import { UserService } from "@/src/modules/user/user.service";
+
 import { SessionService } from "../session/session.service";
+
+import { AuthRefreshDto, AuthSessionResponseDto } from "./auth.controller";
+
+import { Env } from "@/src/config/env.validation";
+import { UserService } from "@/src/modules/user/user.service";
 
 const OTPCacheSchema = z.object({
   hashedOTPCode: z.string(),
@@ -127,9 +132,7 @@ export class AuthService {
     }
   }
 
-  async refreshToken(body: RefreshTokenRequest): Promise<UserSession> {
-    console.log("refreshToken body", body);
-
-    return await this.sessionService.refreshSession(body.refreshToken);
+  async refreshToken(body: AuthRefreshDto): Promise<AuthSessionResponseDto> {
+    return await this.sessionService.refreshSession(body);
   }
 }

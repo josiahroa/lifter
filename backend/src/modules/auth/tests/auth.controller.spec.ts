@@ -1,6 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { AuthController } from "../auth.controller";
 import { beforeEach, describe, expect, it } from "vitest";
+
+import { AuthController } from "../auth.controller";
 
 describe("AuthController", () => {
   let controller: AuthController;

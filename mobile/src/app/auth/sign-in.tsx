@@ -1,7 +1,8 @@
 import { View, Text } from "react-native";
-import SignInWithGoogle from "@/src/components/auth/sign-in-with-google";
+
 import SignInWithApple from "@/src/components/auth/sign-in-with-apple";
 import SignInWithEmailOTP from "@/src/components/auth/sign-in-with-email-otp";
+import SignInWithGoogle from "@/src/components/auth/sign-in-with-google";
 
 export default function SignIn() {
   return (

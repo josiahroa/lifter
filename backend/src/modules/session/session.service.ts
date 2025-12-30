@@ -1,11 +1,19 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
-import { generateRefreshToken, hashRefreshToken } from "./lib/utils";
+import { UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { InjectDb } from "@/src/modules/db/inject-db.decorator";
+
+import type { UserSession } from "@lifter/auth";
 import type { Db } from "@lifter/db";
 import { SessionStore } from "@lifter/db/stores";
-import { UnauthorizedException } from "@nestjs/common";
-import type { UserSession } from "@lifter/auth";
+
+import {
+  type AuthRefreshDto,
+  type AuthSessionResponseDto,
+} from "../auth/dto/refresh-session.dto";
+
+import { generateRefreshToken, hashRefreshToken } from "./lib/utils";
+
+import { InjectDb } from "@/src/modules/db/inject-db.decorator";
 
 @Injectable()
 export class SessionService {
@@ -67,7 +75,8 @@ export class SessionService {
     };
   }
 
-  async refreshSession(refreshToken: string): Promise<UserSession> {
+  async refreshSession(body: AuthRefreshDto): Promise<AuthSessionResponseDto> {
+    const { refreshToken } = body;
     const incomingHashedRefreshToken = hashRefreshToken(refreshToken);
 
     return await this.db.transaction(async (tx) => {
