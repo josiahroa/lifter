@@ -1,4 +1,4 @@
-import { sql, SQL } from "drizzle-orm";
+import { InferSelectModel, sql, SQL } from "drizzle-orm";
 import * as pg from "drizzle-orm/pg-core";
 
 export function lower(col: pg.AnyPgColumn): SQL {
@@ -7,11 +7,13 @@ export function lower(col: pg.AnyPgColumn): SQL {
 
 export const authSchema = pg.pgSchema("auth");
 
+export type User = InferSelectModel<typeof users>;
+
 export const users = authSchema.table(
   "users",
   {
     id: pg.uuid("id").primaryKey().defaultRandom(),
-    email: pg.text("email"),
+    email: pg.varchar("email", { length: 255 }),
     emailVerified: pg.boolean("email_verified").notNull().default(false),
     createdAt: pg.timestamp("created_at").notNull().defaultNow(),
     updatedAt: pg.timestamp("updated_at").notNull().defaultNow(),

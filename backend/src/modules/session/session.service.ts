@@ -2,34 +2,56 @@ import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 
-import type { UserSession } from "@lifter/auth";
-import type { Db } from "@lifter/db";
-import { SessionStore } from "@lifter/db/stores";
-
-import {
-  type AuthRefreshDto,
-  type AuthSessionResponseDto,
-} from "../auth/dto/refresh-session.dto";
-
 import { generateRefreshToken, hashRefreshToken } from "./lib/utils";
+import { Session } from "./session.domain";
 
+import { type DbLike } from "@/src/lib/db";
 import { InjectDb } from "@/src/modules/db/inject-db.decorator";
+import { RefreshToken } from "@/src/modules/session/refresh-token/refresh-token.domain";
+import { SessionStore } from "@/src/modules/session/session.store";
+import { type UserId } from "@/src/modules/user/user.domain";
+
+export interface CreateSessionInput {
+  userId: UserId;
+}
+
+export interface CreateSessionResult {
+  accessToken: string;
+  refreshToken: string;
+  expiresAt: Date;
+  user: {
+    id: UserId;
+  };
+}
+
+export interface RefreshSessionInput {
+  refreshToken: string;
+}
+
+export interface RefreshSessionResult {
+  accessToken: string;
+  refreshToken: string;
+  expiresAt: Date;
+  user: {
+    id: UserId;
+  };
+}
 
 @Injectable()
 export class SessionService {
   constructor(
-    @InjectDb() private readonly db: Db,
+    @InjectDb() private readonly db: DbLike,
     private readonly jwtService: JwtService
   ) {}
 
-  async issueSession(userId: string): Promise<UserSession> {
+  async createSession(input: CreateSessionInput): Promise<CreateSessionResult> {
     const now = new Date();
 
     // Create access token
     const claims = {
       iss: "lifter-backend",
       aud: "lifter-frontend",
-      sub: userId,
+      sub: input.userId,
       iat: Math.floor(now.getTime() / 1000),
       exp: Math.floor(now.getTime() / 1000) + 60 * 60, // 1 hour
     };
@@ -39,26 +61,32 @@ export class SessionService {
     const refreshToken = generateRefreshToken();
     const hashedRefreshToken = hashRefreshToken(refreshToken);
 
-    // Insert session into database
+    // Insert session and refresh token into database
     await this.db.transaction(async (tx) => {
       const store = SessionStore.withTransaction(tx);
 
-      const session = await store.sessionRepository.insertSession({
-        userId,
-      });
+      const session = Session.create({ userId: input.userId });
 
-      if (!session) {
+      const insertedSessionId = await store.sessionRepository.insertSession(
+        session
+      );
+
+      if (!insertedSessionId) {
         throw new InternalServerErrorException("Failed to create session");
       }
 
-      const refreshTokenRecord =
-        await store.refreshTokenRepository.insertRefreshToken({
-          sessionId: session.id,
-          tokenHash: hashedRefreshToken,
-          expiresAt: new Date(now.getTime() + 180 * 24 * 60 * 60 * 1000), // 180 days
-        });
+      const refreshTokenRecord = RefreshToken.create({
+        sessionId: insertedSessionId,
+        tokenHash: hashedRefreshToken,
+        expiresAt: new Date(now.getTime() + 180 * 24 * 60 * 60 * 1000), // 180 days
+      });
 
-      if (!refreshTokenRecord) {
+      const insertedRefreshTokenId =
+        await store.refreshTokenRepository.insertRefreshToken(
+          refreshTokenRecord
+        );
+
+      if (!insertedRefreshTokenId) {
         throw new InternalServerErrorException(
           "Failed to create refresh token"
         );
@@ -70,25 +98,26 @@ export class SessionService {
       expiresAt: new Date(now.getTime() + 60 * 60),
       refreshToken,
       user: {
-        id: userId,
+        id: input.userId,
       },
     };
   }
 
-  async refreshSession(body: AuthRefreshDto): Promise<AuthSessionResponseDto> {
-    const { refreshToken } = body;
-    const incomingHashedRefreshToken = hashRefreshToken(refreshToken);
+  async refreshSession(
+    input: RefreshSessionInput
+  ): Promise<RefreshSessionResult> {
+    const incomingHashedRefreshToken = hashRefreshToken(input.refreshToken);
 
     return await this.db.transaction(async (tx) => {
       const now = Date.now();
       const store = SessionStore.withTransaction(tx);
 
       const existingRefreshTokenRecord =
-        await store.refreshTokenRepository.findRefreshToken({
-          tokenHash: incomingHashedRefreshToken,
-        });
+        await store.refreshTokenRepository.findRefreshToken(
+          incomingHashedRefreshToken
+        );
 
-      if (!existingRefreshTokenRecord) {
+      if (!existingRefreshTokenRecord || !existingRefreshTokenRecord.id) {
         throw new UnauthorizedException("Invalid refresh token");
       }
 
@@ -104,24 +133,23 @@ export class SessionService {
         existingRefreshTokenRecord.rotatedAt ||
         existingRefreshTokenRecord.replacedByHash
       ) {
-        // TODO: Revoke session
         // TODO: Track with metrics for re-use
-        await store.sessionRepository.revokeSession({
-          id: existingRefreshTokenRecord.sessionId,
-          revokedAt: new Date(now),
-        });
-        await store.refreshTokenRepository.revokeRefreshToken({
-          sessionId: existingRefreshTokenRecord.sessionId,
-          revokedAt: new Date(now),
-        });
+        await store.sessionRepository.revokeSession(
+          existingRefreshTokenRecord.sessionId,
+          new Date(now)
+        );
+        await store.refreshTokenRepository.revokeRefreshToken(
+          existingRefreshTokenRecord.sessionId,
+          new Date(now)
+        );
         throw new UnauthorizedException("Refresh token re-use detected");
       }
 
-      const session = await store.sessionRepository.findSession({
-        id: existingRefreshTokenRecord.sessionId,
-      });
+      const session = await store.sessionRepository.findSession(
+        existingRefreshTokenRecord.sessionId
+      );
 
-      if (!session) {
+      if (!session || !session.id) {
         throw new UnauthorizedException("Session not found");
       }
 
@@ -139,42 +167,49 @@ export class SessionService {
       };
       const accessToken = this.jwtService.sign(claims);
 
-      // Create refresh token
+      // Generate new refresh token values
       const newRefreshToken = generateRefreshToken();
       const newRefreshTokenHashed = hashRefreshToken(newRefreshToken);
 
       const rotatedRefreshTokenRecord =
-        await store.refreshTokenRepository.rotateRefreshToken({
-          id: existingRefreshTokenRecord.id,
-          rotatedAt: new Date(now),
-          replacedByHash: newRefreshTokenHashed,
-        });
+        await store.refreshTokenRepository.rotateRefreshToken(
+          existingRefreshTokenRecord.id,
+          new Date(now),
+          newRefreshTokenHashed
+        );
 
       // Check if there was a concurrent update that caused the rotation to fail
       if (!rotatedRefreshTokenRecord) {
-        // TODO: Revoke session
         // TODO: Track with metrics for failed token rotations
-        await store.sessionRepository.revokeSession({
-          id: session.id,
-          revokedAt: new Date(now),
-        });
-        await store.refreshTokenRepository.revokeRefreshToken({
-          sessionId: session.id,
-          revokedAt: new Date(now),
-        });
+        await store.sessionRepository.revokeSession(session.id, new Date(now));
+        await store.refreshTokenRepository.revokeRefreshToken(
+          session.id,
+          new Date(now)
+        );
         throw new UnauthorizedException("Failed to rotate refresh token");
       }
 
-      await store.refreshTokenRepository.insertRefreshToken({
+      const newRefreshTokenRecord = RefreshToken.create({
         sessionId: session.id,
         tokenHash: newRefreshTokenHashed,
         expiresAt: new Date(now + 180 * 24 * 60 * 60 * 1000), // 180 days
       });
 
+      const insertedNewRefreshTokenId =
+        await store.refreshTokenRepository.insertRefreshToken(
+          newRefreshTokenRecord
+        );
+
+      if (!insertedNewRefreshTokenId) {
+        throw new InternalServerErrorException(
+          "Failed to create new refresh token"
+        );
+      }
+
       return {
         accessToken,
         expiresAt: new Date(now + 60 * 60 * 1000),
-        refreshToken,
+        refreshToken: newRefreshToken,
         user: {
           id: session.userId,
         },

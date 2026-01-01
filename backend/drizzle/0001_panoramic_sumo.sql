@@ -1,0 +1,1 @@
+ALTER TABLE "auth"."users" ALTER COLUMN "email" SET DATA TYPE varchar(255);

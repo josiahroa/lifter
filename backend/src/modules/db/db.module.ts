@@ -1,7 +1,7 @@
 import { Global, Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
-import { createDbConnection, type Db } from "@lifter/db";
+import { createDbConnection, type Db } from "@/src/lib/db";
 
 export const DB_CONNECTION = "DB_CONNECTION";
 

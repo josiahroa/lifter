@@ -1,54 +1,82 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
-import { z } from "zod";
 
-import { OTPChannelSchema } from "@lifter/auth";
-import { type User } from "@lifter/db";
-import { UserRepository } from "@lifter/db/repositories";
+import { User, UserId } from "./user.domain";
 
-export const GetUserOptionalParams = z.object({
-  id: z.string(),
-  idType: OTPChannelSchema,
-});
-type GetUserOptionalParams = z.infer<typeof GetUserOptionalParams>;
+import { UserRepository } from "@/src/modules/user/user.repository";
 
-export const CreateUserParams = z.object({
-  id: z.string(),
-  idType: OTPChannelSchema,
-});
-type CreateUserParams = z.infer<typeof CreateUserParams>;
+export interface CreateUserInput {
+  email: string;
+}
+
+export interface CreateUserResult {
+  id: UserId;
+}
+
+export interface GetUserByIdInput {
+  id: UserId;
+}
+
+export interface GetUserByEmailInput {
+  email: string;
+}
+
+export interface CreateVerifiedUserInput {
+  email: string;
+}
+
+export interface CreateVerifiedUserResult {
+  id: UserId;
+}
 
 @Injectable()
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async getUser({ id, idType }: GetUserOptionalParams): Promise<User | null> {
-    try {
-      if (idType === "email") {
-        return await this.userRepository.getUserByEmail(id);
-      } else if (idType === "phone") {
-        throw new Error("getUserByPhone not implemented");
-      }
-      throw new Error("Invalid ID type");
-    } catch (error) {
-      console.error("Error getting user: ", error);
-      throw new InternalServerErrorException("Error getting user");
+  async getUserById(input: GetUserByIdInput): Promise<User | null> {
+    const user = await this.userRepository.findUserById(input.id);
+    if (!user) {
+      return null;
     }
+    return user;
   }
 
-  async createUser({ id, idType }: CreateUserParams): Promise<User> {
-    try {
-      if (idType === "email") {
-        return await this.userRepository.createUser({
-          email: id,
-          emailVerified: true,
-        });
-      } else if (idType === "phone") {
-        throw new Error("createUserByPhone not implemented");
-      }
-      throw new Error("Invalid ID type");
-    } catch (error) {
-      console.error("Error creating user: ", error);
-      throw new InternalServerErrorException("Error creating user");
+  async getUserByEmail(input: GetUserByEmailInput): Promise<User | null> {
+    const user = await this.userRepository.findUserByEmail(input.email);
+    if (!user) {
+      return null;
     }
+    return user;
+  }
+
+  async createUser(input: CreateUserInput): Promise<CreateUserResult> {
+    const user = User.create({ email: input.email });
+    const insertedUserId = await this.userRepository.insertUser(user);
+
+    if (!insertedUserId) {
+      throw new InternalServerErrorException("Failed to create user");
+    }
+
+    return {
+      id: insertedUserId,
+    };
+  }
+
+  /**
+   * This method should never be used directly from a controller. Only create users with this method
+   * when the sign up process verifies the email.
+   */
+  async createVerifiedUser(
+    input: CreateVerifiedUserInput
+  ): Promise<CreateVerifiedUserResult> {
+    const user = User.create({ email: input.email, emailVerified: true });
+    const insertedUserId = await this.userRepository.insertUser(user);
+
+    if (!insertedUserId) {
+      throw new InternalServerErrorException("Failed to create user");
+    }
+
+    return {
+      id: insertedUserId,
+    };
   }
 }

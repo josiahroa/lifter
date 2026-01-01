@@ -1,20 +1,7 @@
 import { Controller, Post, Body, Version, UsePipes } from "@nestjs/common";
 
-import {
-  type StartOTPRequest,
-  type StartOTPResponse,
-  type VerifyOTPRequest,
-  StartOTPRequestSchema,
-  VerifyOTPRequestSchema,
-} from "@lifter/auth";
-
+import * as AuthDto from "./auth.dto";
 import { AuthService } from "./auth.service";
-import {
-  AuthRefreshDtoSchema,
-  AuthSessionResponseDtoSchema,
-  type AuthRefreshDto,
-  type AuthSessionResponseDto,
-} from "./dto/refresh-session.dto";
 
 import { ZodValidationPipe } from "@/src/lib/zod-validation-pipe";
 
@@ -24,25 +11,31 @@ export class AuthController {
 
   @Post("otp/start-challenge")
   @Version("1")
-  @UsePipes(new ZodValidationPipe(StartOTPRequestSchema))
-  startOTPChallenge(@Body() body: StartOTPRequest): Promise<StartOTPResponse> {
-    return this.authService.startOTPChallenge(body);
+  @UsePipes(new ZodValidationPipe(AuthDto.OtpStartChallengeDtoRequestSchema))
+  async startOTPChallenge(
+    @Body() body: AuthDto.OtpStartChallengeDtoRequest
+  ): Promise<AuthDto.OtpStartChallengeDtoResponse> {
+    const challenge = await this.authService.startOTPChallenge(body);
+    return AuthDto.OtpStartChallengeDtoResponseSchema.parse(challenge);
   }
 
   @Post("otp/verify-challenge")
   @Version("1")
-  @UsePipes(new ZodValidationPipe(VerifyOTPRequestSchema))
-  verifyOTPChallenge(@Body() body: VerifyOTPRequest): Promise<unknown> {
-    return this.authService.verifyOTPChallenge(body);
+  @UsePipes(new ZodValidationPipe(AuthDto.OtpVerifyChallengeDtoRequestSchema))
+  async verifyOTPChallenge(
+    @Body() body: AuthDto.OtpVerifyChallengeDtoRequest
+  ): Promise<AuthDto.OtpVerifyChallengeDtoResponse> {
+    const session = await this.authService.verifyOTPChallenge(body);
+    return AuthDto.OtpVerifyChallengeDtoResponseSchema.parse(session);
   }
 
   @Post("refresh")
   @Version("1")
-  @UsePipes(new ZodValidationPipe(AuthRefreshDtoSchema))
-  async refreshToken(
-    @Body() body: AuthRefreshDto
-  ): Promise<AuthSessionResponseDto> {
-    const session = await this.authService.refreshToken(body);
-    return AuthSessionResponseDtoSchema.parse(session);
+  @UsePipes(new ZodValidationPipe(AuthDto.RefreshSessionDtoRequestSchema))
+  async refreshSession(
+    @Body() body: AuthDto.RefreshSessionDtoRequest
+  ): Promise<AuthDto.RefreshSessionDtoResponse> {
+    const session = await this.authService.refreshSession(body);
+    return AuthDto.RefreshSessionDtoResponseSchema.parse(session);
   }
 }

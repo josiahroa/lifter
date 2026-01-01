@@ -1,12 +1,11 @@
 import { Module } from "@nestjs/common";
 
-import { Db } from "@lifter/db";
-import { UserRepository } from "@lifter/db/repositories";
-
 import { UserController } from "./user.controller";
 import { UserService } from "./user.service";
 
+import { Db } from "@/src/lib/db";
 import { DB_CONNECTION } from "@/src/modules/db/db.module";
+import { UserRepository } from "@/src/modules/user/user.repository";
 
 @Module({
   controllers: [UserController],
