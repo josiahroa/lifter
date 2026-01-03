@@ -61,6 +61,15 @@ export default defineConfig(
     },
   },
   {
+    files: ["mobile/**/*.ts", "mobile/**/*.tsx"],
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+  {
     files: ["**/*.ts", "**/*.tsx"],
     plugins: {
       import: importPlugin,
