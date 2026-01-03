@@ -16,7 +16,7 @@
     "db:studio": "drizzle-kit studio",
     "db:test": "bash ./scripts/test-db.sh",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "vitest run"
+    "test": "vitest run --exclude '**/src/lib/db/**'"
   },
   "dependencies": {
     "@keyv/redis": "^5.1.5",
