@@ -23,6 +23,10 @@ export class User {
   constructor(input: UserProps & Partial<UserPersistedProps>) {
     this.email = input.email;
     this.emailVerified = input.emailVerified ?? false;
+
+    this.id = input.id;
+    this.createdAt = input.createdAt;
+    this.updatedAt = input.updatedAt;
   }
 
   public static create(input: UserProps): User {

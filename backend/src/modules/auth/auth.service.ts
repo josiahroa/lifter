@@ -90,6 +90,7 @@ export class AuthService {
         userId = newUser.id;
       } else {
         console.log("user already exists");
+        userId = existingUser.id ?? null;
       }
 
       // Verify that the found or created user has an ID

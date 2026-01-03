@@ -3,14 +3,14 @@ import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 
-import { auth } from "@/src/lib/auth-client";
+import { auth, OTPChannel, OTPPurpose } from "@/src/lib/auth";
 
 export interface ConfirmEmailOTPPayload {
   code: string;
 }
 
 export default function ConfirmEmailOTP() {
-  const { email } = useLocalSearchParams();
+  const { challengeId, email } = useLocalSearchParams();
 
   const [resendRemainingTime, setResendRemainingTime] = useState(0);
 
@@ -27,8 +27,11 @@ export default function ConfirmEmailOTP() {
 
   const onSubmit = async (data: ConfirmEmailOTPPayload) => {
     try {
-      const session = await auth.signIn("emailOTP", {
-        email: email as string,
+      const session = await auth.loginWithOTP({
+        channel: OTPChannel.EMAIL,
+        purpose: OTPPurpose.SIGN_IN,
+        challengeId: challengeId as string,
+        identifier: email as string,
         code: data.code,
       });
 
@@ -47,8 +50,12 @@ export default function ConfirmEmailOTP() {
     try {
       if (resendRemainingTime > 0) return;
 
-      const response = await auth.requestEmailVerificationCode(email as string);
-      if (!response.success) {
+      const response = await auth.startOTPChallenge(
+        email as string,
+        OTPChannel.EMAIL,
+        OTPPurpose.SIGN_IN
+      );
+      if (!response) {
         console.warn("Failed to request email verification code");
         return;
       }

@@ -2,7 +2,7 @@ import { router } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { View, Text, TouchableOpacity, TextInput } from "react-native";
 
-import { auth } from "@/src/lib/auth-client";
+import { auth, OTPChannel, OTPPurpose } from "@/src/lib/auth";
 
 interface SignInWithEmailOTPPayload {
   email: string;
@@ -22,15 +22,18 @@ export default function SignInWithEmailOTP() {
 
   const onSubmit = async (data: SignInWithEmailOTPPayload) => {
     try {
-      const response = await auth.requestOTPCode("email", data.email);
-      if (!response.success) {
-        console.warn("Failed to request email verification code");
+      const response = await auth.startOTPChallenge(
+        data.email,
+        OTPChannel.EMAIL,
+        OTPPurpose.SIGN_IN
+      );
+      if (!response) {
+        console.warn("Failed to start OTP challenge");
         return;
       }
-
       router.push({
         pathname: "/auth/confirm-email-otp",
-        params: { email: data.email },
+        params: { challengeId: response.challengeId, email: data.email },
       });
     } catch (error) {
       console.error("Failed to sign in with email", error);
