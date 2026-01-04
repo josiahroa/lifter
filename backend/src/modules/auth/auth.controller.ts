@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Version, UsePipes } from "@nestjs/common";
+import { Controller, Post, Body, Version, UsePipes, Get } from "@nestjs/common";
 
 import * as AuthDto from "./auth.dto";
 import { AuthService } from "./auth.service";
@@ -37,5 +37,16 @@ export class AuthController {
   ): Promise<AuthDto.RefreshSessionDtoResponse> {
     const session = await this.authService.refreshSession(body);
     return AuthDto.RefreshSessionDtoResponseSchema.parse(session);
+  }
+
+  /**
+   * JWKS endpoint for PowerSync JWT verification
+   * Public endpoint - no authentication required
+   * Returns public keys in JWKS format for RS256 signature verification
+   */
+  @Get(".well-known/jwks.json")
+  @Version("1")
+  getJWKS() {
+    return this.authService.getJWKS();
   }
 }
