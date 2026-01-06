@@ -64,7 +64,15 @@ export class AuthService {
   async startOTPChallenge(
     input: StartOTPChallengeInput
   ): Promise<StartOTPChallengeResult> {
-    return await this.otpService.createChallenge(input);
+    const challenge = await this.otpService.createChallenge(input);
+
+    if (input.channel === "email") {
+      // TODO: Send OTP to the email
+    } else if (input.channel === "phone") {
+      // TODO: Send OTP to the phone
+    }
+
+    return challenge;
   }
 
   async verifyOTPChallenge(

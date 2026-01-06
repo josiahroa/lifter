@@ -5,8 +5,9 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
 
+import RootLayout from "@/components/layouts/root-layout";
 import { AuthProvider, useAuth } from "@/components/providers/auth-provider";
-import { ThemeProvider } from "@/components/providers/theme-provider";
+import { ThemeProvider, useTheme } from "@/components/providers/theme-provider";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -20,6 +21,8 @@ SplashScreen.preventAutoHideAsync().catch((e) => {
 
 function RootNavigator() {
   const { session, isLoading } = useAuth();
+  const { theme } = useTheme();
+
   console.log("Loading session: ", isLoading);
 
   SplashScreen.hideAsync().catch((e) => {
@@ -43,21 +46,26 @@ function RootNavigator() {
   }
 
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-        animation: "fade",
-        animationDuration: 100,
-      }}
-    >
-      <Stack.Protected guard={!!session}>
-        <Stack.Screen name="(private)" />
-      </Stack.Protected>
+    <RootLayout>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          animation: "fade",
+          animationDuration: 100,
+          contentStyle: {
+            backgroundColor: theme.colors.background,
+          },
+        }}
+      >
+        <Stack.Protected guard={!!session}>
+          <Stack.Screen name="(private)" />
+        </Stack.Protected>
 
-      <Stack.Protected guard={!session}>
-        <Stack.Screen name="auth/sign-in" />
-      </Stack.Protected>
-    </Stack>
+        <Stack.Protected guard={!session}>
+          <Stack.Screen name="auth/sign-in" />
+        </Stack.Protected>
+      </Stack>
+    </RootLayout>
   );
 }
 

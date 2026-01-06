@@ -84,7 +84,7 @@ export default function ConfirmEmailOTP() {
     : "Resend verification email";
 
   return (
-    <View className="flex-1 items-center justify-center">
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text>Verify your email</Text>
       <Text>Please enter the 6 digit code sent to</Text>
       <Text>{typeof email === "string" ? email : ""}</Text>

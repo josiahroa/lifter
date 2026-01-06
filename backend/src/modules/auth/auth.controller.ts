@@ -9,6 +9,7 @@ import { ZodValidationPipe } from "@/src/lib/zod-validation-pipe";
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  // TODO: Add validation for the channel and identifier, if email, verify that it is a valid email address
   @Post("otp/start-challenge")
   @Version("1")
   @UsePipes(new ZodValidationPipe(AuthDto.OtpStartChallengeDtoRequestSchema))

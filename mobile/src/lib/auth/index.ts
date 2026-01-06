@@ -336,3 +336,10 @@ if (!apiUrl) {
   throw new Error("LIFTER_BACKEND_API_URL is not set");
 }
 export const auth = new AuthClient(new LifterAuthBackend(apiUrl));
+
+export class SignInGlobalError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "SignInGlobalError";
+  }
+}
