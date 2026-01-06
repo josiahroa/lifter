@@ -6,8 +6,8 @@ export const envSchema = z.object({
   OTP_SECRET: z.string(),
   JWT_SECRET: z.string(),
   JWT_EXPIRES_IN: z.string(),
-  POWERSYNC_BASE64_PRIVATE_KEY: z.string(),
-  POWERSYNC_BASE64_PUBLIC_KEY: z.string(),
+  // POWERSYNC_BASE64_PRIVATE_KEY: z.string(),
+  // POWERSYNC_BASE64_PUBLIC_KEY: z.string(),
 });
 
 export type Env = z.infer<typeof envSchema>;

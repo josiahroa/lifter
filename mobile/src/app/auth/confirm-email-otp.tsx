@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 
-import { auth, OTPChannel, OTPPurpose } from "@/src/lib/auth";
+import { auth, OTPChannel, OTPPurpose } from "@/lib/auth";
 
 export interface ConfirmEmailOTPPayload {
   code: string;

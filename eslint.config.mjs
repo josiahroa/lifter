@@ -1,7 +1,7 @@
 import eslint from "@eslint/js";
 import { defineConfig } from "eslint/config";
 import tseslint from "typescript-eslint";
-// import parser from "@typescript-eslint/parser";
+import parser from "@typescript-eslint/parser";
 import importPlugin from "eslint-plugin-import";
 import globals from "globals";
 
@@ -63,6 +63,7 @@ export default defineConfig(
   {
     files: ["mobile/**/*.ts", "mobile/**/*.tsx"],
     languageOptions: {
+      parser,
       parserOptions: {
         projectService: true,
         tsconfigRootDir: import.meta.dirname,

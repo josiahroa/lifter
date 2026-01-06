@@ -2,7 +2,7 @@ import { router } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { View, Text, TouchableOpacity, TextInput } from "react-native";
 
-import { auth, OTPChannel, OTPPurpose } from "@/src/lib/auth";
+import { auth, OTPChannel, OTPPurpose } from "@/lib/auth";
 
 interface SignInWithEmailOTPPayload {
   email: string;

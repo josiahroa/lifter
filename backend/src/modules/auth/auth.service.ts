@@ -4,7 +4,6 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 
-import { JWKSKey, JWKSService } from "@/src/modules/auth/jwks/jwks.service";
 import {
   OTPChannel,
   OTPPurpose,
@@ -54,17 +53,12 @@ export interface RefreshSessionResult {
   };
 }
 
-export interface GetJWKSResult {
-  keys: JWKSKey[];
-}
-
 @Injectable()
 export class AuthService {
   constructor(
     private readonly sessionService: SessionService,
     private readonly userService: UserService,
-    private readonly otpService: OTPService,
-    private readonly jwksService: JWKSService
+    private readonly otpService: OTPService
   ) {}
 
   async startOTPChallenge(
@@ -130,9 +124,5 @@ export class AuthService {
         id: session.user.id,
       },
     };
-  }
-
-  async getJWKS(): Promise<GetJWKSResult> {
-    return await this.jwksService.getJWKS();
   }
 }

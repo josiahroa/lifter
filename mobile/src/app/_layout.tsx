@@ -1,11 +1,12 @@
+import "react-native-reanimated";
+import "../../global.css";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import "react-native-reanimated";
-import "../../global.css";
 import { ActivityIndicator, View } from "react-native";
 
-import { AuthProvider, useAuth } from "../components/providers/auth-provider";
+import { AuthProvider, useAuth } from "@/components/providers/auth-provider";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -61,17 +62,11 @@ function RootNavigator() {
 }
 
 export default function AppLayout() {
-  // const system = useSystem();
-
-  // const db = useMemo(() => {
-  //   return system.powersync;
-  // }, []);
-
   return (
-    <AuthProvider>
-      {/* <PowerSyncContext.Provider value={db}> */}
-      <RootNavigator />
-      {/* </PowerSyncContext.Provider> */}
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <RootNavigator />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

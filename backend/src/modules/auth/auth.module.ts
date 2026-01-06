@@ -9,7 +9,6 @@ import { Env } from "src/config/env.validation";
 
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
-import { JWKSService } from "./jwks/jwks.service";
 import { OTPService } from "./otp/otp.service";
 import { JwtStrategy } from "./strategies/jwt-auth.strategy";
 
@@ -18,7 +17,7 @@ import { UserModule } from "@/src/modules/user/user.module";
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, OTPService, JWKSService],
+  providers: [AuthService, JwtStrategy, OTPService],
   imports: [
     UserModule,
     ConfigModule,

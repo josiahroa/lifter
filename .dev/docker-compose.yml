@@ -1,41 +1,41 @@
 services:
   # Used by Powersync https://docs.powersync.com/self-hosting/local-development
-  powersync:
-    restart: unless-stopped
-    depends_on:
-      mongo-rs-init:
-        condition: service_completed_successfully
-      powersync-init:
-        condition: service_completed_successfully
-    image: journeyapps/powersync-service:latest
-    command: ["start", "-r", "unified"]
-    volumes:
-      - ./config/config.yaml:/config/config.yaml
-      - ./config/sync_rules.yaml:/config/sync_rules.yaml
-    environment:
-      POWERSYNC_CONFIG_PATH: /config/config.yaml
-    ports:
-      - 8080:8080
+  # powersync:
+  #   restart: unless-stopped
+  #   depends_on:
+  #     mongo-rs-init:
+  #       condition: service_completed_successfully
+  #     powersync-init:
+  #       condition: service_completed_successfully
+  #   image: journeyapps/powersync-service:latest
+  #   command: ["start", "-r", "unified"]
+  #   volumes:
+  #     - ./config/config.yaml:/config/config.yaml
+  #     - ./config/sync_rules.yaml:/config/sync_rules.yaml
+  #   environment:
+  #     POWERSYNC_CONFIG_PATH: /config/config.yaml
+  #   ports:
+  #     - 8080:8080
 
   # Used by Powersync https://docs.powersync.com/self-hosting/local-development
-  mongo:
-    image: mongo:7.0
-    command: --replSet rs0 --bind_ip_all --quiet
-    restart: unless-stopped
-    ports:
-      - 27017:27017
-    volumes:
-      - mongo_storage:/data/db
-  # Initializes the MongoDB replica set. This service will not usually be actively running
-  mongo-rs-init:
-    image: mongo:7.0
-    depends_on:
-      - mongo
-    restart: on-failure
-    entrypoint:
-      - bash
-      - -c
-      - 'mongosh --host mongo:27017 --eval ''try{rs.status().ok && quit(0)} catch {} rs.initiate({_id: "rs0", version: 1, members: [{ _id: 0, host : "mongo:27017" }]})'''
+  # mongo:
+  #   image: mongo:7.0
+  #   command: --replSet rs0 --bind_ip_all --quiet
+  #   restart: unless-stopped
+  #   ports:
+  #     - 27017:27017
+  #   volumes:
+  #     - mongo_storage:/data/db
+  # # Initializes the MongoDB replica set. This service will not usually be actively running
+  # mongo-rs-init:
+  #   image: mongo:7.0
+  #   depends_on:
+  #     - mongo
+  #   restart: on-failure
+  #   entrypoint:
+  #     - bash
+  #     - -c
+  #     - 'mongosh --host mongo:27017 --eval ''try{rs.status().ok && quit(0)} catch {} rs.initiate({_id: "rs0", version: 1, members: [{ _id: 0, host : "mongo:27017" }]})'''
 
   db:
     image: postgres:18-alpine
@@ -78,24 +78,24 @@ services:
         condition: service_healthy
 
   # Initialize PowerSync user and publication
-  powersync-init:
-    image: postgres:18-alpine
-    depends_on:
-      migrate:
-        condition: service_completed_successfully
-    volumes:
-      - ./config/init-powersync.sql:/init-powersync.sql:ro
-    environment:
-      - PGPASSWORD=lifter
-    entrypoint:
-      - bash
-      - -c
-      - |
-        echo "Initializing PowerSync database setup..."
-        psql -h db -U lifter -d lifter -f /init-powersync.sql
-        echo "PowerSync initialization complete"
+  # powersync-init:
+  #   image: postgres:18-alpine
+  #   depends_on:
+  #     migrate:
+  #       condition: service_completed_successfully
+  #   volumes:
+  #     - ./config/init-powersync.sql:/init-powersync.sql:ro
+  #   environment:
+  #     - PGPASSWORD=lifter
+  #   entrypoint:
+  #     - bash
+  #     - -c
+  #     - |
+  #       echo "Initializing PowerSync database setup..."
+  #       psql -h db -U lifter -d lifter -f /init-powersync.sql
+  #       echo "PowerSync initialization complete"
 
 volumes:
-  mongo_storage:
+  # mongo_storage:
   postgres_data:
   redis_data:
