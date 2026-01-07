@@ -7,6 +7,7 @@ export interface Theme {
     foreground: string;
     primary: string;
     secondary: string;
+    disabled: string;
     text: {
       primary: string;
       secondary: string;
@@ -24,9 +25,11 @@ export interface Theme {
       monospace: string;
     };
     size: {
-      small: number;
-      medium: number;
-      large: number;
+      xs: number;
+      sm: number;
+      md: number;
+      lg: number;
+      xl: number;
     };
     weights: {
       light: number;
@@ -52,6 +55,7 @@ export const lightTheme: Theme = {
     foreground: "#000000",
     primary: "#000000",
     secondary: "#000000",
+    disabled: "#d1d1d1",
     text: {
       primary: "#000000",
       secondary: "#d1d1d1",
@@ -69,9 +73,11 @@ export const lightTheme: Theme = {
       monospace: "System",
     },
     size: {
-      small: 12,
-      medium: 16,
-      large: 20,
+      xs: 12,
+      sm: 14,
+      md: 16,
+      lg: 20,
+      xl: 24,
     },
     weights: {
       light: 300,
@@ -98,6 +104,7 @@ export const darkTheme: Theme = {
     foreground: "#ffffff",
     primary: "#ffffff",
     secondary: "#ffffff",
+    disabled: "#414141",
     text: {
       primary: "#ffffff",
       secondary: "#ffffff",

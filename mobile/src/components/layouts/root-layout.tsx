@@ -1,28 +1,14 @@
-import { useMemo } from "react";
 import { Keyboard, Pressable, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useTheme } from "../providers/theme-provider";
+import { type Theme, createThemedStyles } from "@/lib/styles";
 
 interface RootLayoutProps {
   children: React.ReactNode;
 }
 
 export default function RootLayout({ children }: RootLayoutProps) {
-  const { theme } = useTheme();
-
-  const styles = useMemo(() => {
-    return StyleSheet.create({
-      container: {
-        flex: 1,
-        paddingHorizontal: 24,
-        backgroundColor: theme.colors.background,
-      },
-      content: {
-        flex: 1,
-      },
-    });
-  }, [theme]);
+  const styles = useStyles();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -37,3 +23,16 @@ export default function RootLayout({ children }: RootLayoutProps) {
     </SafeAreaView>
   );
 }
+
+const useStyles = createThemedStyles((theme: Theme) => {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      paddingHorizontal: 24,
+      backgroundColor: theme.colors.background,
+    },
+    content: {
+      flex: 1,
+    },
+  });
+});

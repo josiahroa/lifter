@@ -7,7 +7,7 @@ import {
   darkTheme,
   type SystemTheme,
   type Theme,
-} from "@/lib/theme";
+} from "@/lib/styles/theme";
 
 export type ThemeMode = SystemTheme | "system";
 
