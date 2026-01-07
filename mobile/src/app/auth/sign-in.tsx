@@ -32,7 +32,7 @@ export default function SignInScreen() {
 
       <View style={styles.orSeparator}>
         <View style={styles.orSeparatorLine} />
-        <Text>or</Text>
+        <Text style={styles.orSeparatorText}>or</Text>
         <View style={styles.orSeparatorLine} />
       </View>
 
@@ -51,7 +51,7 @@ const useStyles = createThemedStyles((theme: Theme) => {
       marginTop: 200,
     },
     header: {
-      color: theme.colors.foreground,
+      color: theme.colors.text.primary,
       fontSize: 24,
       fontWeight: "bold",
       marginBottom: 16,
@@ -63,23 +63,27 @@ const useStyles = createThemedStyles((theme: Theme) => {
       marginVertical: theme.spacing.lg,
       gap: theme.spacing.md,
     },
+    orSeparatorText: {
+      color: theme.colors.text.primary,
+      fontSize: theme.fonts.size.sm,
+    },
     orSeparatorLine: {
       flex: 1,
       height: 1,
-      backgroundColor: theme.colors.border.secondary,
+      backgroundColor: theme.colors.border.subtle,
     },
     socialLoginButtons: {
       gap: theme.spacing.sm,
     },
     errorContainer: {
       marginVertical: theme.spacing.md,
-      backgroundColor: "red",
+      backgroundColor: theme.colors.status.error,
       paddingVertical: theme.spacing.xs,
       paddingHorizontal: theme.spacing.md,
       borderRadius: theme.spacing.sm,
     },
     errorText: {
-      color: "white",
+      color: theme.colors.text.inverse,
       fontWeight: "bold",
       fontSize: 12,
       marginVertical: theme.spacing.md,

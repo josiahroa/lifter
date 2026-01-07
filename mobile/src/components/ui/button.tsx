@@ -19,7 +19,7 @@ export default function Button({ children, ...props }: ButtonProps) {
 const useStyles = createThemedStyles((theme: Theme) => {
   return {
     button: {
-      backgroundColor: theme.colors.primary,
+      backgroundColor: theme.colors.action.primary,
       borderRadius: 8,
       padding: theme.spacing.sm,
       width: "100%",

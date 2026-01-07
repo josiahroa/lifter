@@ -105,7 +105,7 @@ export default function ConfirmOTP() {
       <View style={styles.headerContainer}>
         <Text style={styles.headerText}>Verify your {channel as string}</Text>
         <View style={styles.subHeaderContainer}>
-          <Text style={styles.subHeaderText}>
+          <Text style={styles.subText}>
             We sent a 6-digit one time passcode to
           </Text>
           <Text style={styles.identifierText}>{identifier}</Text>
@@ -149,7 +149,7 @@ export default function ConfirmOTP() {
       </TouchableOpacity>
 
       <View style={styles.resendCodeContainer}>
-        <Text>
+        <Text style={styles.subText}>
           {`Didn't receive the code? ${
             resendRemainingTime > 0
               ? `(00:${String(resendRemainingTime).padStart(2, "0")})`
@@ -160,7 +160,7 @@ export default function ConfirmOTP() {
           <Text
             style={[
               styles.resendCodeText,
-              isResendDisabled && { color: theme.colors.disabled },
+              isResendDisabled && { color: theme.colors.text.disabled },
             ]}
           >
             Resend one time passcode
@@ -180,12 +180,14 @@ const useStyles = createThemedStyles((theme: Theme) => {
       paddingVertical: theme.spacing.lg,
     },
     menuText: {
+      color: theme.colors.text.primary,
       fontSize: theme.fonts.size.lg,
     },
     headerContainer: {
       marginBottom: theme.spacing.xl,
     },
     headerText: {
+      color: theme.colors.text.primary,
       fontSize: theme.fonts.size.xl,
       fontWeight: "bold",
     },
@@ -193,7 +195,7 @@ const useStyles = createThemedStyles((theme: Theme) => {
       marginTop: theme.spacing.sm,
       gap: theme.spacing.xs,
     },
-    subHeaderText: {
+    subText: {
       fontSize: theme.fonts.size.sm,
       color: theme.colors.text.secondary,
     },
@@ -213,7 +215,7 @@ const useStyles = createThemedStyles((theme: Theme) => {
       padding: theme.spacing.sm,
     },
     continueButton: {
-      backgroundColor: theme.colors.primary,
+      backgroundColor: theme.colors.action.primary,
       borderRadius: 8,
       padding: theme.spacing.sm,
       width: "100%",
@@ -230,7 +232,7 @@ const useStyles = createThemedStyles((theme: Theme) => {
     },
     resendCodeText: {
       fontSize: theme.fonts.size.sm,
-      color: theme.colors.text.primary,
+      color: theme.colors.action.link,
     },
   });
 });

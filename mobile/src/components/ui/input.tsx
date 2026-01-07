@@ -23,7 +23,7 @@ export default function Input({ ...textProps }: TextInputProps) {
     borderColor: interpolateColor(
       focus.value,
       [0, 1],
-      [theme.colors.border.secondary, theme.colors.border.primary]
+      [theme.colors.border.subtle, theme.colors.border.default]
     ),
   }));
 

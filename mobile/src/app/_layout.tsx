@@ -53,7 +53,7 @@ function RootNavigator() {
           animation: "fade",
           animationDuration: 100,
           contentStyle: {
-            backgroundColor: theme.colors.background,
+            backgroundColor: theme.colors.background.app,
           },
         }}
       >

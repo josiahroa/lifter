@@ -1,21 +1,36 @@
+import { palette } from "./palette";
+
 export type SystemTheme = "light" | "dark";
 
 export interface Theme {
   mode: SystemTheme;
   colors: {
-    background: string;
-    foreground: string;
-    primary: string;
-    secondary: string;
-    disabled: string;
+    background: {
+      app: string;
+      surface: string;
+    };
     text: {
       primary: string;
       secondary: string;
+      disabled: string;
       inverse: string;
     };
     border: {
+      subtle: string;
+      default: string;
+    };
+    status: {
+      success: string;
+      error: string;
+      warning: string;
+      info: string;
+    };
+    action: {
       primary: string;
       secondary: string;
+      destructive: string;
+      disabled: string;
+      link: string;
     };
   };
   fonts: {
@@ -51,19 +66,32 @@ export interface Theme {
 export const lightTheme: Theme = {
   mode: "light",
   colors: {
-    background: "#ffffff",
-    foreground: "#000000",
-    primary: "#000000",
-    secondary: "#000000",
-    disabled: "#d1d1d1",
+    background: {
+      app: palette.neutral[50],
+      surface: palette.neutral[100],
+    },
     text: {
-      primary: "#000000",
-      secondary: "#d1d1d1",
-      inverse: "#ffffff",
+      primary: palette.neutral[900],
+      secondary: palette.neutral[700],
+      disabled: palette.neutral[700],
+      inverse: palette.neutral[50],
     },
     border: {
-      primary: "#000000",
-      secondary: "#d1d1d1",
+      subtle: palette.neutral[200],
+      default: palette.neutral[900],
+    },
+    status: {
+      success: palette.green[500],
+      error: palette.red[500],
+      warning: palette.yellow[500],
+      info: palette.blue[500],
+    },
+    action: {
+      primary: palette.neutral[900],
+      secondary: palette.neutral[700],
+      destructive: palette.red[500],
+      disabled: palette.neutral[700],
+      link: palette.blue[500],
     },
   },
   fonts: {
@@ -100,19 +128,32 @@ export const darkTheme: Theme = {
   ...lightTheme,
   mode: "dark",
   colors: {
-    background: "#111315",
-    foreground: "#ffffff",
-    primary: "#ffffff",
-    secondary: "#ffffff",
-    disabled: "#414141",
+    background: {
+      app: palette.neutral[900],
+      surface: palette.neutral[800],
+    },
     text: {
-      primary: "#ffffff",
-      secondary: "#ffffff",
-      inverse: "#000000",
+      primary: palette.neutral[50],
+      secondary: palette.neutral[700],
+      disabled: palette.neutral[700],
+      inverse: palette.neutral[900],
     },
     border: {
-      primary: "#414141",
-      secondary: "#414141",
+      subtle: palette.neutral[700],
+      default: palette.neutral[50],
+    },
+    status: {
+      success: palette.green[500],
+      error: palette.red[500],
+      warning: palette.yellow[500],
+      info: palette.blue[500],
+    },
+    action: {
+      primary: palette.neutral[50],
+      secondary: palette.neutral[700],
+      destructive: palette.red[500],
+      disabled: palette.neutral[700],
+      link: palette.blue[500],
     },
   },
 };

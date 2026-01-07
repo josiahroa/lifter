@@ -29,7 +29,7 @@ const useStyles = createThemedStyles((theme: Theme) => {
     container: {
       flex: 1,
       paddingHorizontal: 24,
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.colors.background.app,
     },
     content: {
       flex: 1,
