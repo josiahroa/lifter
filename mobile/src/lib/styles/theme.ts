@@ -1,4 +1,8 @@
+import { TextStyle } from "react-native";
+
 import { palette } from "./palette";
+
+type FontWeight = TextStyle["fontWeight"];
 
 export type SystemTheme = "light" | "dark";
 
@@ -47,10 +51,11 @@ export interface Theme {
       xl: number;
     };
     weights: {
-      light: number;
-      regular: number;
-      medium: number;
-      bold: number;
+      light: FontWeight;
+      regular: FontWeight;
+      medium: FontWeight;
+      semibold: FontWeight;
+      bold: FontWeight;
     };
   };
   spacing: {
@@ -84,7 +89,7 @@ export const lightTheme: Theme = {
       success: palette.green[500],
       error: palette.red[500],
       warning: palette.yellow[500],
-      info: palette.blue[500],
+      info: palette.neutral[900],
     },
     action: {
       primary: palette.neutral[900],
@@ -108,10 +113,11 @@ export const lightTheme: Theme = {
       xl: 24,
     },
     weights: {
-      light: 300,
-      regular: 400,
-      medium: 500,
-      bold: 700,
+      light: "300",
+      regular: "400",
+      medium: "500",
+      semibold: "600",
+      bold: "700",
     },
   },
   spacing: {
@@ -146,7 +152,7 @@ export const darkTheme: Theme = {
       success: palette.green[500],
       error: palette.red[500],
       warning: palette.yellow[500],
-      info: palette.blue[500],
+      info: palette.neutral[900],
     },
     action: {
       primary: palette.neutral[50],

@@ -337,9 +337,12 @@ if (!apiUrl) {
 }
 export const auth = new AuthClient(new LifterAuthBackend(apiUrl));
 
-export class SignInGlobalError extends Error {
-  constructor(message: string) {
+export class SignInError extends Error {
+  description: string;
+
+  constructor(message: string, description: string) {
     super(message);
-    this.name = "SignInGlobalError";
+    this.name = "SignInError";
+    this.description = description;
   }
 }

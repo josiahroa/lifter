@@ -6,7 +6,7 @@ import { z } from "zod";
 
 import { useTheme } from "@/components/providers/theme-provider";
 import Input from "@/components/ui/input";
-import { auth, OTPChannel, OTPPurpose, SignInGlobalError } from "@/lib/auth";
+import { auth, OTPChannel, OTPPurpose, SignInError } from "@/lib/auth";
 import { type Theme, createThemedStyles } from "@/lib/styles";
 
 interface SignInWithOTPFormValues {
@@ -14,14 +14,14 @@ interface SignInWithOTPFormValues {
 }
 
 interface SignInWithOTPProps {
-  onGlobalError: (error: SignInGlobalError) => void;
+  onError: (error: SignInError) => void;
 }
 
 const emailSchema = z.email("Please enter a valid email");
 
-export default function SignInWithOTP({ onGlobalError }: SignInWithOTPProps) {
-  const { theme } = useTheme();
+export default function SignInWithOTP({ onError }: SignInWithOTPProps) {
   const styles = useStyles();
+  const { theme } = useTheme();
 
   const {
     handleSubmit,
@@ -59,54 +59,53 @@ export default function SignInWithOTP({ onGlobalError }: SignInWithOTPProps) {
       console.error("Failed to sign in with email", error);
       if (isAxiosError(error)) {
         if (error.code === "ERR_NETWORK") {
-          onGlobalError(
-            new SignInGlobalError(
-              "A network error occurred, please try again later."
-            )
-          );
-          return;
+          console.warn("Check that the server is running.");
         }
       }
-      onGlobalError(
-        new SignInGlobalError(
-          "An unexpected error occurred, please try again later."
+
+      onError(
+        new SignInError(
+          "An unexpected error occurred.",
+          "Please try again later."
         )
       );
     }
   };
 
   const InputError = ({ message }: { message: string }) => {
-    return <Text style={{ color: "black" }}>{message}</Text>;
+    return <Text style={styles.inputError}>{message}</Text>;
   };
 
   return (
     <View style={styles.container}>
-      <Controller
-        control={control}
-        name="identifier"
-        rules={{
-          validate: (value) => {
-            const result = emailSchema.safeParse(value.trim());
-            return result.success ? true : result.error.issues[0]?.message;
-          },
-        }}
-        render={({ field }) => (
-          <Input
-            placeholder="Email"
-            autoCapitalize="none"
-            autoComplete="email"
-            keyboardType="email-address"
-            autoCorrect={false}
-            value={field.value}
-            onChangeText={field.onChange}
-            onBlur={field.onBlur}
-            placeholderTextColor={theme.colors.text.secondary}
-          />
+      <View style={styles.inputContainer}>
+        <Controller
+          control={control}
+          name="identifier"
+          rules={{
+            validate: (value) => {
+              const result = emailSchema.safeParse(value.trim());
+              return result.success ? true : result.error.issues[0]?.message;
+            },
+          }}
+          render={({ field }) => (
+            <Input
+              placeholder="Email"
+              autoCapitalize="none"
+              autoComplete="email"
+              keyboardType="email-address"
+              autoCorrect={false}
+              value={field.value}
+              onChangeText={field.onChange}
+              onBlur={field.onBlur}
+              placeholderTextColor={theme.colors.text.secondary}
+            />
+          )}
+        />
+        {errors.identifier && (
+          <InputError message={errors.identifier.message ?? ""} />
         )}
-      />
-      {errors.identifier && (
-        <InputError message={errors.identifier.message ?? ""} />
-      )}
+      </View>
 
       <TouchableOpacity
         style={styles.button}
@@ -125,6 +124,9 @@ const useStyles = createThemedStyles((theme: Theme) => {
       width: "100%",
       gap: theme.spacing.md,
     },
+    inputContainer: {
+      gap: theme.spacing.sm,
+    },
     button: {
       backgroundColor: theme.colors.action.primary,
       borderRadius: 8,
@@ -136,6 +138,11 @@ const useStyles = createThemedStyles((theme: Theme) => {
     },
     buttonText: {
       color: theme.colors.text.inverse,
+    },
+    inputError: {
+      color: theme.colors.status.error,
+      fontSize: theme.fonts.size.sm,
+      fontWeight: theme.fonts.weights.regular,
     },
   };
 });

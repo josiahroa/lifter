@@ -4,31 +4,32 @@ import { View, Text } from "react-native";
 import SignInWithApple from "@/components/auth/sign-in-with-apple";
 import SignInWithGoogle from "@/components/auth/sign-in-with-google";
 import SignInWithOTP from "@/components/auth/sign-in-with-otp";
-import KeyboardAvoidingLayout from "@/components/layouts/keyboard-avoiding-layout";
-import { SignInGlobalError } from "@/lib/auth";
+import Alert from "@/components/ui/alert";
+import { SignInError } from "@/lib/auth";
 import { type Theme, createThemedStyles } from "@/lib/styles";
 
 export default function SignInScreen() {
   const styles = useStyles();
 
-  const [globalError, setGlobalError] = useState<SignInGlobalError | null>(
-    null
-  );
-
-  const GlobalError = ({ error }: { error: SignInGlobalError | null }) => {
-    return (
-      <View style={[styles.errorContainer, { opacity: globalError ? 1 : 0 }]}>
-        <Text style={styles.errorText}>{error?.message}</Text>
-      </View>
-    );
-  };
+  const [error, setError] = useState<SignInError | null>(null);
 
   return (
-    <KeyboardAvoidingLayout style={styles.container} offset={0.5}>
-      <GlobalError error={globalError} />
-      <Text style={styles.header}>Log In</Text>
+    <View style={styles.container}>
+      <View style={styles.headerContainer}>
+        <Text style={styles.header}>Log In</Text>
+      </View>
 
-      <SignInWithOTP onGlobalError={setGlobalError} />
+      {error && (
+        <View style={styles.errorContainer}>
+          <Alert
+            title={error.message}
+            description={error.description}
+            type="error"
+          />
+        </View>
+      )}
+
+      <SignInWithOTP onError={setError} />
 
       <View style={styles.orSeparator}>
         <View style={styles.orSeparatorLine} />
@@ -40,7 +41,7 @@ export default function SignInScreen() {
         <SignInWithGoogle />
         <SignInWithApple />
       </View>
-    </KeyboardAvoidingLayout>
+    </View>
   );
 }
 
@@ -48,13 +49,19 @@ const useStyles = createThemedStyles((theme: Theme) => {
   return {
     container: {
       flex: 1,
-      marginTop: 200,
+      padding: theme.spacing.md,
+      paddingTop: theme.spacing.xxl,
+    },
+    errorContainer: {
+      marginBottom: theme.spacing.md,
+    },
+    headerContainer: {
+      marginBottom: theme.spacing.md,
     },
     header: {
       color: theme.colors.text.primary,
-      fontSize: 24,
+      fontSize: theme.fonts.size.xl,
       fontWeight: "bold",
-      marginBottom: 16,
     },
     orSeparator: {
       flexDirection: "row",
@@ -74,19 +81,6 @@ const useStyles = createThemedStyles((theme: Theme) => {
     },
     socialLoginButtons: {
       gap: theme.spacing.sm,
-    },
-    errorContainer: {
-      marginVertical: theme.spacing.md,
-      backgroundColor: theme.colors.status.error,
-      paddingVertical: theme.spacing.xs,
-      paddingHorizontal: theme.spacing.md,
-      borderRadius: theme.spacing.sm,
-    },
-    errorText: {
-      color: theme.colors.text.inverse,
-      fontWeight: "bold",
-      fontSize: 12,
-      marginVertical: theme.spacing.md,
     },
   };
 });

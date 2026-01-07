@@ -5,8 +5,9 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { z } from "zod";
 
 import { useTheme } from "@/components/providers/theme-provider";
+import Alert from "@/components/ui/alert";
 import Input from "@/components/ui/input";
-import { auth, OTPChannel, OTPPurpose } from "@/lib/auth";
+import { auth, OTPChannel, OTPPurpose, SignInError } from "@/lib/auth";
 import { type Theme, createThemedStyles } from "@/lib/styles";
 
 export interface ConfirmOTPFormValues {
@@ -25,6 +26,7 @@ export default function ConfirmOTP() {
   }>();
 
   const [resendRemainingTime, setResendRemainingTime] = useState(0);
+  const [error, setError] = useState<SignInError | null>(null);
 
   const {
     control,
@@ -55,6 +57,12 @@ export default function ConfirmOTP() {
       router.replace("/(private)/home");
     } catch (error) {
       console.error("Failed to confirm OTP", error);
+      setError(
+        new SignInError(
+          "An unexpected error occurred.",
+          "Please try again later."
+        )
+      );
     }
   };
 
@@ -104,6 +112,17 @@ export default function ConfirmOTP() {
 
       <View style={styles.headerContainer}>
         <Text style={styles.headerText}>Verify your {channel as string}</Text>
+
+        {error && (
+          <View style={styles.errorContainer}>
+            <Alert
+              title={error.message}
+              description={error.description}
+              type="error"
+            />
+          </View>
+        )}
+
         <View style={styles.subHeaderContainer}>
           <Text style={styles.subText}>
             We sent a 6-digit one time passcode to
@@ -233,6 +252,10 @@ const useStyles = createThemedStyles((theme: Theme) => {
     resendCodeText: {
       fontSize: theme.fonts.size.sm,
       color: theme.colors.action.link,
+    },
+    errorContainer: {
+      marginTop: theme.spacing.md,
+      marginBottom: theme.spacing.xs,
     },
   });
 });
