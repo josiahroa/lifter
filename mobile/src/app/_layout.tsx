@@ -1,9 +1,20 @@
 import "react-native-reanimated";
 import "../../global.css";
+import {
+  // focusManager,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import { ActivityIndicator, View } from "react-native";
+import {
+  ActivityIndicator,
+  // AppState,
+  // AppStateStatus,
+  // Platform,
+  View,
+} from "react-native";
 
 import RootLayout from "@/components/layouts/root-layout";
 import { AuthProvider, useAuth } from "@/components/providers/auth-provider";
@@ -19,11 +30,25 @@ SplashScreen.preventAutoHideAsync().catch((e) => {
   console.warn("Failed to prevent auto-hide for splash screen", e);
 });
 
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: 2 } },
+});
+
+// function onAppStateChange(status: AppStateStatus) {
+//   if (Platform.OS !== "web") {
+//     focusManager.setFocused(status === "active");
+//   }
+// }
+
+// useEffect(() => {
+//   const subscription = AppState.addEventListener("change", onAppStateChange);
+
+//   return () => subscription.remove();
+// }, []);
+
 function RootNavigator() {
   const { session, isLoading } = useAuth();
   const { theme } = useTheme();
-
-  console.log("Loading session: ", isLoading);
 
   SplashScreen.hideAsync().catch((e) => {
     console.warn("Fallback failed to hide splash screen", e);
@@ -69,12 +94,14 @@ function RootNavigator() {
   );
 }
 
-export default function AppLayout() {
+export default function App() {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <RootNavigator />
-      </AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <RootNavigator />
+        </AuthProvider>
+      </QueryClientProvider>
     </ThemeProvider>
   );
 }

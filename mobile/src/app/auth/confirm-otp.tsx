@@ -1,11 +1,18 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
 import { z } from "zod";
 
 import { useTheme } from "@/components/providers/theme-provider";
 import Alert from "@/components/ui/alert";
+import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
 import { auth, OTPChannel, OTPPurpose, SignInError } from "@/lib/auth";
 import { type Theme, createThemedStyles } from "@/lib/styles";
@@ -159,13 +166,19 @@ export default function ConfirmOTP() {
         />
       </View>
 
-      <TouchableOpacity
-        style={[styles.continueButton, !canSubmit && { opacity: 0.5 }]}
-        onPress={handleSubmit(onSubmit)}
-        disabled={!canSubmit}
-      >
-        <Text style={styles.continueButtonText}>Continue</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <Button
+          size="large"
+          onPress={handleSubmit(onSubmit)}
+          disabled={!canSubmit}
+        >
+          {isSubmitting ? (
+            <ActivityIndicator size="small" color={theme.colors.text.inverse} />
+          ) : (
+            <Text style={styles.buttonText}>Continue</Text>
+          )}
+        </Button>
+      </View>
 
       <View style={styles.resendCodeContainer}>
         <Text style={styles.subText}>
@@ -226,23 +239,10 @@ const useStyles = createThemedStyles((theme: Theme) => {
       gap: theme.spacing.sm,
       marginBottom: theme.spacing.md,
     },
-    codeInput: {
-      fontSize: theme.fonts.size.lg,
-      color: theme.colors.text.primary,
-      borderWidth: 1,
-      borderRadius: 8,
-      padding: theme.spacing.sm,
-    },
-    continueButton: {
-      backgroundColor: theme.colors.action.primary,
-      borderRadius: 8,
-      padding: theme.spacing.sm,
+    buttonContainer: {
       width: "100%",
-      height: theme.spacing.xxl,
-      alignItems: "center",
-      justifyContent: "center",
     },
-    continueButtonText: {
+    buttonText: {
       color: theme.colors.text.inverse,
     },
     resendCodeContainer: {

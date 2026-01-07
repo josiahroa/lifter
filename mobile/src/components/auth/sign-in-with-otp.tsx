@@ -1,10 +1,11 @@
 import { isAxiosError } from "axios";
 import { router } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
-import { Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import { z } from "zod";
 
 import { useTheme } from "@/components/providers/theme-provider";
+import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
 import { auth, OTPChannel, OTPPurpose, SignInError } from "@/lib/auth";
 import { type Theme, createThemedStyles } from "@/lib/styles";
@@ -107,13 +108,19 @@ export default function SignInWithOTP({ onError }: SignInWithOTPProps) {
         )}
       </View>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleSubmit(onSubmit)}
-        disabled={isSubmitting}
-      >
-        <Text style={styles.buttonText}>Continue</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <Button
+          size="large"
+          onPress={handleSubmit(onSubmit)}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <ActivityIndicator size="small" color={theme.colors.text.inverse} />
+          ) : (
+            <Text style={styles.buttonText}>Continue</Text>
+          )}
+        </Button>
+      </View>
     </View>
   );
 }
@@ -127,14 +134,8 @@ const useStyles = createThemedStyles((theme: Theme) => {
     inputContainer: {
       gap: theme.spacing.sm,
     },
-    button: {
-      backgroundColor: theme.colors.action.primary,
-      borderRadius: 8,
-      padding: theme.spacing.sm,
+    buttonContainer: {
       width: "100%",
-      height: theme.spacing.xxl,
-      alignItems: "center",
-      justifyContent: "center",
     },
     buttonText: {
       color: theme.colors.text.inverse,

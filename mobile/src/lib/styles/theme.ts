@@ -35,6 +35,8 @@ export interface Theme {
       destructive: string;
       disabled: string;
       link: string;
+      inverse: string;
+      success: string;
     };
   };
   fonts: {
@@ -65,6 +67,12 @@ export interface Theme {
     lg: number;
     xl: number;
     xxl: number;
+    xxxl: number;
+  };
+  heights: {
+    sm: number;
+    md: number;
+    lg: number;
   };
 }
 
@@ -97,6 +105,8 @@ export const lightTheme: Theme = {
       destructive: palette.red[500],
       disabled: palette.neutral[700],
       link: palette.blue[500],
+      inverse: palette.neutral[900],
+      success: palette.green[500],
     },
   },
   fonts: {
@@ -127,6 +137,12 @@ export const lightTheme: Theme = {
     lg: 24,
     xl: 32,
     xxl: 48,
+    xxxl: 56,
+  },
+  heights: {
+    sm: 30,
+    md: 40,
+    lg: 48,
   },
 };
 
@@ -160,6 +176,8 @@ export const darkTheme: Theme = {
       destructive: palette.red[500],
       disabled: palette.neutral[700],
       link: palette.blue[500],
+      inverse: palette.neutral[50],
+      success: palette.green[500],
     },
   },
 };

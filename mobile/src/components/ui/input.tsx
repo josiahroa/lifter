@@ -51,7 +51,7 @@ const useStyles = createThemedStyles((theme: Theme) => {
       borderRadius: 8,
       padding: theme.spacing.sm,
       width: "100%",
-      height: theme.spacing.xxl,
+      height: theme.heights.lg,
     },
   };
 });
