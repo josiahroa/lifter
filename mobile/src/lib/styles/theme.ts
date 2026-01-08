@@ -18,6 +18,7 @@ export interface Theme {
       secondary: string;
       disabled: string;
       inverse: string;
+      subtle: string;
     };
     border: {
       subtle: string;
@@ -88,6 +89,7 @@ export const lightTheme: Theme = {
       secondary: palette.neutral[700],
       disabled: palette.neutral[700],
       inverse: palette.neutral[50],
+      subtle: palette.neutral[400],
     },
     border: {
       subtle: palette.neutral[200],
@@ -159,6 +161,7 @@ export const darkTheme: Theme = {
       secondary: palette.neutral[700],
       disabled: palette.neutral[700],
       inverse: palette.neutral[900],
+      subtle: palette.neutral[600],
     },
     border: {
       subtle: palette.neutral[700],

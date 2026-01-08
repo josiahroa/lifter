@@ -11,7 +11,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   const styles = useStyles();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
       <Pressable
         style={{ flex: 1 }}
         onPress={() => {
@@ -28,11 +28,7 @@ const useStyles = createThemedStyles((theme: Theme) => {
   return StyleSheet.create({
     container: {
       flex: 1,
-      paddingHorizontal: 24,
       backgroundColor: theme.colors.background.app,
-    },
-    content: {
-      flex: 1,
     },
   });
 });

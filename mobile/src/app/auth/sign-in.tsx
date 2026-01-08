@@ -49,7 +49,7 @@ const useStyles = createThemedStyles((theme: Theme) => {
   return {
     container: {
       flex: 1,
-      padding: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
       paddingTop: theme.spacing.xxl,
     },
     errorContainer: {

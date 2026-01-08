@@ -61,7 +61,7 @@ export default function ConfirmOTP() {
         return;
       }
 
-      router.replace("/(private)/home");
+      router.replace("/(private)");
     } catch (error) {
       console.error("Failed to confirm OTP", error);
       setError(
@@ -207,6 +207,7 @@ const useStyles = createThemedStyles((theme: Theme) => {
   return StyleSheet.create({
     container: {
       flex: 1,
+      paddingHorizontal: theme.spacing.lg,
     },
     menuContainer: {
       paddingVertical: theme.spacing.lg,
