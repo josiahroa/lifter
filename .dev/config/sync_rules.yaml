@@ -1,0 +1,45 @@
+# PowerSync Sync Streams Configuration
+# See: https://docs.powersync.com/usage/sync-streams
+
+config:
+  edition: 2
+
+streams:
+  # User's exercises - auto-subscribe for offline-first behavior
+  exercises:
+    query: SELECT * FROM app.exercises WHERE user_id = auth.user_id() AND deleted_at IS NULL
+    auto_subscribe: true
+
+  # User's workouts
+  workouts:
+    query: SELECT * FROM app.workouts WHERE user_id = auth.user_id() AND deleted_at IS NULL
+    auto_subscribe: true
+
+  # User's workout logs
+  workout_logs:
+    query: SELECT * FROM app.workout_logs WHERE user_id = auth.user_id() AND deleted_at IS NULL
+    auto_subscribe: true
+
+  # Exercise logs - related through workout_logs using subquery
+  exercise_logs:
+    query: |
+      SELECT * FROM app.exercise_logs
+      WHERE workout_log_id IN (SELECT id FROM app.workout_logs WHERE user_id = auth.user_id())
+      AND deleted_at IS NULL
+    auto_subscribe: true
+
+  # Exercise set logs - related through workout_logs using subquery
+  exercise_set_logs:
+    query: |
+      SELECT * FROM app.exercise_set_logs
+      WHERE workout_log_id IN (SELECT id FROM app.workout_logs WHERE user_id = auth.user_id())
+      AND deleted_at IS NULL
+    auto_subscribe: true
+
+  # Workout exercises - related through workouts using subquery
+  workout_exercises:
+    query: |
+      SELECT * FROM app.workout_exercises
+      WHERE workout_id IN (SELECT id FROM app.workouts WHERE user_id = auth.user_id())
+      AND deleted_at IS NULL
+    auto_subscribe: true
